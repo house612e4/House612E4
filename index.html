@@ -1,17 +1,128 @@
 <!DOCTYPE html>
 <html lang="bn">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>আমাদের হিসার</title>
-    
-    <!-- Tailwind CSS CDN (ডিজাইন পাওয়ার জন্য এটি খুবই গুরুত্বপূর্ণ) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>বাসার হিসাব</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body class="bg-slate-900 text-white">
+<div id="root"></div>
+
+<script type="text/babel">
+
+const { useState } = React;
+
+// ===== MEMBERS =====
+const members = [
+  "জাকির",
+  "ফখরুল",
+  "রকিব",
+  "মহসিন",
+  "জিসান",
+  "নোকিভ"
+];
+
+// ===== RENT =====
+const totalRent = 1850;
+const perRent = totalRent / members.length;
+
+// ===== CLEANING RULE =====
+function getCleaner(date) {
+  const d = date.getDate();
+  if (d <= 5) return members[0];
+  if (d <= 10) return members[1];
+  if (d <= 15) return members[2];
+  if (d <= 20) return members[3];
+  if (d <= 25) return members[4];
+  return members[5];
+}
+
+// ===== APP =====
+function App() {
+  const [electric, setElectric] = useState(0);
+  const [gas, setGas] = useState(0);
+
+  const today = new Date();
+
+  const perElectric = electric / members.length;
+  const perGas = gas / members.length;
+
+  return (
+    <div className="max-w-md mx-auto p-5 space-y-6">
+
+      <h1 className="text-3xl font-bold text-center text-yellow-400">
+        বাসার হিসাব
+      </h1>
+
+      {/* Cleaning */}
+      <div className="bg-teal-500 p-6 rounded-2xl text-center">
+        <p>আজকের পরিষ্কার দায়িত্ব</p>
+        <h2 className="text-2xl font-bold">
+          {getCleaner(today)}
+        </h2>
+      </div>
+
+      {/* Input */}
+      <div className="bg-white text-black p-6 rounded-2xl space-y-4">
+
+        <h3 className="font-bold">বিল বসাও</h3>
+
+        <input
+          type="number"
+          placeholder="বিদ্যুৎ বিল"
+          className="w-full p-3 border rounded-xl"
+          onChange={(e) => setElectric(Number(e.target.value))}
+        />
+
+        <input
+          type="number"
+          placeholder="গ্যাস বিল"
+          className="w-full p-3 border rounded-xl"
+          onChange={(e) => setGas(Number(e.target.value))}
+        />
+
+      </div>
+
+      {/* Result */}
+      <div className="space-y-4">
+
+        {members.map(name => (
+          <div key={name} className="bg-white text-black p-5 rounded-2xl flex items-center gap-4">
+
+            <img
+              src={name + ".jpeg"}
+              className="w-16 h-16 rounded-xl object-cover"
+              onError={(e)=>e.target.src="https://via.placeholder.com/64"}
+            />
+
+            <div className="flex-1">
+              <p className="font-bold">{name}</p>
+              <p>ভাড়া: ৳{perRent.toFixed(2)}</p>
+              <p>বিদ্যুৎ: ৳{perElectric.toFixed(2)}</p>
+              <p>গ্যাস: ৳{perGas.toFixed(2)}</p>
+
+              <p className="font-bold text-blue-600 mt-2">
+                মোট: ৳{(perRent + perElectric + perGas).toFixed(2)}
+              </p>
+            </div>
+
+          </div>
+        ))}
+
+      </div>
+
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+</script>
+</body>
 </html>
