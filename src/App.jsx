@@ -105,7 +105,7 @@ export default function App() {
     <div className="min-h-screen bg-gray-900 text-white p-5">
 
       <h1 className="text-3xl font-bold text-center mb-4">
-        🏠 বাসা নাম্বার - ৬১২ ({month})
+        🏠 বাসা হিসাব ({month})
       </h1>
 
       {/* MONTH SELECT */}
