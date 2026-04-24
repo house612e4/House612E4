@@ -16,13 +16,13 @@ const LOGIN_PIN = "7307";
 const EDIT_PIN = "8019";
 
 const rules = [
-  "কিচেন রুম ও গলি ঝাড়ু দিতে হবে",
+  "কিচেন রুম ও গলি ঝাড়ু ও মোব দিতে হবে",
   "চুলার উপরে-নিচে পরিষ্কার করতে হবে",
   "ফ্রিজ ভিতরে-বাহিরে পরিষ্কার করতে হবে",
   "ডাইনিং টেবিল পরিষ্কার করতে হবে",
   "সিঙ্ক পরিষ্কার করতে হবে",
   "কিচেন ওয়াল মুছতে হবে",
-  "বাথরুম ও বেসিন পরিষ্কার করতে হবে",
+  "বাথরুম, বাথরুমের ওয়াল, বাথটাব ও বেসিন পরিষ্কার করতে হবে",
   "রাত ১০টার আগে ময়লার ব্যাগ পরিবর্তন",
 ];
 
@@ -89,6 +89,7 @@ export default function App() {
         src="/splash_video.mp4"
         autoPlay
         muted
+        playsInline
         className="w-full h-screen object-cover"
       />
     );
@@ -158,14 +159,14 @@ export default function App() {
       </div>
 
       <div className="mt-6 bg-purple-600 p-4 rounded-xl">
-        <h2 className="text-xl mb-2 text-white">🧹 পরিষ্কারের সিডিউল</h2>
+        <h2 className="text-xl mb-2 text-white">🧹বাসা পরিষ্কারের সিডিউল</h2>
         {getSchedule().map((s, i) => (
           <p key={i} className="text-white">{s.name} → {s.date}</p>
         ))}
       </div>
 
       <div className="mt-6 bg-green-600 p-4 rounded-xl">
-        <h2 className="text-xl mb-2 text-white">📋 পরিষ্কারের নিয়মাবলি</h2>
+        <h2 className="text-xl mb-2 text-white">📋বাসা পরিষ্কারের নিয়মাবলি</h2>
         {rules.map((r, i) => (
           <p key={i} className="text-white">✅ {r}</p>
         ))}
