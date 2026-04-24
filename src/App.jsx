@@ -3,12 +3,12 @@ import { db } from "./firebase";
 import { doc, setDoc, onSnapshot } from "firebase/firestore";
 
 const MEMBERS = [
-  { name: "জাকির", img: "/জাকির.jpeg" },
-  { name: "ফখরুল", img: "/ফখরুল.jpeg" },
-  { name: "রকিব", img: "/রকিব.jpeg" },
-  { name: "মহসিন", img: "/মহসিন.jpeg" },
-  { name: "জিসান", img: "/জিসান.jpeg" },
-  { name: "নোকিব", img: "/নোকিব.jpeg" },
+  { name: "জাকির", img: "/jakir.jpeg" },
+  { name: "ফখরুল", img: "/fokrul.jpeg" },
+  { name: "রকিব", img: "/rokib.jpeg" },
+  { name: "মহসিন", img: "/mahsin.jpeg" },
+  { name: "জিসান", img: "/jisan.jpeg" },
+  { name: "নোকিব", img: "/noqib.jpeg" },
 ];
 
 const RENT = 1850;
@@ -74,9 +74,9 @@ export default function App() {
     if (pin === LOGIN_PIN) {
       setShowSplash(true);
       setTimeout(() => {
-        setShowSplash(false);
-        setUnlocked(true);
-      }, 7000);
+  setShowSplash(false);
+  setUnlocked(true);
+}, 7000);
     } else if (pin === EDIT_PIN) {
       setUnlocked(true);
       setEditMode(true);
@@ -86,12 +86,12 @@ export default function App() {
   if (showSplash) {
     return (
       <video
-        src="/splash_video.mp4"
-        autoPlay
-        muted
-        playsInline
-        className="w-full h-screen object-cover"
-      />
+  src="/splash_video.mp4"
+  autoPlay
+  muted
+  playsInline
+  className="w-full h-screen object-cover"
+/>
     );
   }
 
@@ -146,10 +146,13 @@ export default function App() {
         {MEMBERS.map((m, i) => (
           <div key={i} className="bg-white text-black p-3 rounded-xl flex gap-3 items-center">
             <img
-              src={m.img}
-              className="w-14 h-14 rounded-xl object-cover"
-              onError={(e)=> e.target.src="https://via.placeholder.com/50"}
-            />
+  src={m.img}
+  alt={m.name}
+  className="w-14 h-14 rounded-xl object-cover"
+  onError={(e)=> {
+    e.target.src = "https://via.placeholder.com/100?text=No+Image"
+  }}
+/>
             <div>
               <p className="text-lg font-bold">{m.name}</p>
               <p>মোট: ৳{total.toFixed(2)}</p>
