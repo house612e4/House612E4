@@ -6,7 +6,7 @@ const firebaseConfig = {
   authDomain: "lillahi-etimkhana.firebaseapp.com",
   projectId: "lillahi-etimkhana",
   storageBucket: "lillahi-etimkhana.firebasestorage.app",
-  messagingSenderId: "777737297360",
+  messagingSenderId: "777373297360",
   appId: "1:777737297360:web:61c04a82a1098204ea8cd5",
   measurementId: "G-H8ZBFHJE6M"
 };
