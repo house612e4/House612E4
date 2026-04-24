@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { db } from "./firebase";
 import { doc, setDoc, onSnapshot } from "firebase/firestore";
 
-// ================= MEMBERS =================
 const MEMBERS = [
   { name: "জাকির", img: "/জাকির.jpeg" },
   { name: "ফখরুল", img: "/ফখরুল.jpeg" },
@@ -16,7 +15,6 @@ const RENT = 1850;
 const LOGIN_PIN = "7307";
 const EDIT_PIN = "8019";
 
-// ================= CLEANING RULES =================
 const rules = [
   "কিচেন রুম ও গলি ঝাড়ু দিতে হবে",
   "চুলার উপরে-নিচে পরিষ্কার করতে হবে",
@@ -28,7 +26,6 @@ const rules = [
   "রাত ১০টার আগে ময়লার ব্যাগ পরিবর্তন",
 ];
 
-// ================= CLEANING SCHEDULE =================
 const getSchedule = () => {
   return MEMBERS.map((m, i) => ({
     name: m.name,
@@ -37,7 +34,6 @@ const getSchedule = () => {
 };
 
 export default function App() {
-
   const [pin, setPin] = useState("");
   const [unlocked, setUnlocked] = useState(false);
   const [showSplash, setShowSplash] = useState(false);
@@ -49,7 +45,6 @@ export default function App() {
   const [editMode, setEditMode] = useState(false);
   const [month, setMonth] = useState("");
 
-  // ================= FIRESTORE =================
   useEffect(() => {
     const ref = doc(db, "house", "current");
 
@@ -75,39 +70,18 @@ export default function App() {
     });
   };
 
-  // ================= LOGIN =================
   const handleLogin = () => {
     if (pin === LOGIN_PIN) {
       setShowSplash(true);
       setTimeout(() => {
+        setShowSplash(false);
         setUnlocked(true);
-      },  7000);
-    }
-    if (pin === EDIT_PIN) {
+      }, 7000);
+    } else if (pin === EDIT_PIN) {
       setUnlocked(true);
       setEditMode(true);
     }
   };
-
-  if (!unlocked) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="bg-white p-6 rounded-2xl text-center">
-          <input
-            type="password"
-            autoComplete="off"
-            value={pin}
-            onChange={(e) => setPin(e.target.value)}
-            className="p-3 border rounded-xl text-center"
-            placeholder="PIN"
-          />
-          <button onClick={handleLogin} className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-xl">
-            Enter
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   if (showSplash) {
     return (
@@ -120,7 +94,26 @@ export default function App() {
     );
   }
 
-  // ================= CALC =================
+  if (!unlocked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="bg-white p-6 rounded-2xl text-center">
+          <input
+            type="password"
+            autoComplete="off"
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            className="p-3 border rounded-xl text-center text-black"
+            placeholder="PIN"
+          />
+          <button onClick={handleLogin} className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-xl w-full">
+            Enter
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const perRent = RENT / MEMBERS.length;
   const perElectric = electric / MEMBERS.length;
   const perGas = gas / MEMBERS.length;
@@ -130,10 +123,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-5">
-
       <h1 className="text-2xl text-center mb-4">🏠 ৬১২ বাসা ম্যানেজমেন্ট</h1>
 
-      {/* Month */}
       <input
         value={month}
         onChange={(e) => setMonth(e.target.value)}
@@ -141,54 +132,44 @@ export default function App() {
         className="w-full p-2 rounded-xl text-black mb-4"
       />
 
-      {/* Bills */}
       {editMode && (
         <div className="bg-white text-black p-4 rounded-xl space-y-2">
-          <input type="number" placeholder="বিদ্যুৎ" value={electric} onChange={e=>setElectric(Number(e.target.value))} className="w-full p-2"/>
-          <input type="number" placeholder="গ্যাস" value={gas} onChange={e=>setGas(Number(e.target.value))} className="w-full p-2"/>
-          <input type="number" placeholder="অন্যান্য খরচ" value={extra} onChange={e=>setExtra(Number(e.target.value))} className="w-full p-2"/>
+          <input type="number" placeholder="বিদ্যুৎ" value={electric || ""} onChange={e=>setElectric(Number(e.target.value))} className="w-full p-2 border rounded"/>
+          <input type="number" placeholder="গ্যাস" value={gas || ""} onChange={e=>setGas(Number(e.target.value))} className="w-full p-2 border rounded"/>
+          <input type="number" placeholder="অন্যান্য খরচ" value={extra || ""} onChange={e=>setExtra(Number(e.target.value))} className="w-full p-2 border rounded"/>
           <button onClick={saveData} className="bg-green-600 text-white w-full py-2 rounded-xl">Save</button>
         </div>
       )}
 
-      {/* Members */}
       <div className="space-y-3 mt-5">
         {MEMBERS.map((m, i) => (
           <div key={i} className="bg-white text-black p-3 rounded-xl flex gap-3 items-center">
-
             <img
               src={m.img}
               className="w-14 h-14 rounded-xl object-cover"
               onError={(e)=> e.target.src="https://via.placeholder.com/50"}
             />
-
             <div>
-              <p className="font-bold">{m.name}</p>
+              <p className="text-lg font-bold">{m.name}</p>
               <p>মোট: ৳{total.toFixed(2)}</p>
             </div>
-
           </div>
         ))}
       </div>
 
-      {/* Schedule */}
       <div className="mt-6 bg-purple-600 p-4 rounded-xl">
-        <h2 className="text-xl mb-2">🧹 পরিষ্কারের সিডিউল</h2>
-
+        <h2 className="text-xl mb-2 text-white">🧹 পরিষ্কারের সিডিউল</h2>
         {getSchedule().map((s, i) => (
-          <p key={i}>{s.name} → {s.date}</p>
+          <p key={i} className="text-white">{s.name} → {s.date}</p>
         ))}
       </div>
 
-      {/* Rules */}
       <div className="mt-6 bg-green-600 p-4 rounded-xl">
-        <h2 className="text-xl mb-2">📋 পরিষ্কারের নিয়মাবলি</h2>
-
+        <h2 className="text-xl mb-2 text-white">📋 পরিষ্কারের নিয়মাবলি</h2>
         {rules.map((r, i) => (
-          <p key={i}>✅ {r}</p>
+          <p key={i} className="text-white">✅ {r}</p>
         ))}
       </div>
-
     </div>
   );
 }
