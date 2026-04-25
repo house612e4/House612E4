@@ -126,12 +126,12 @@ export default function App() {
     <div className="min-h-screen bg-gray-900 text-white p-5">
       <h1 className="text-2xl text-center mb-4">🏠 ৬১২ বাসা ম্যানেজমেন্ট</h1>
 
-      <input
-        value={month}
-        onChange={(e) => setMonth(e.target.value)}
-        placeholder="মাস লিখুন"
-        className="w-full p-2 rounded-xl text-black mb-4"
-      />
+  <input
+    value={month}
+    onChange={(e) => setMonth(e.target.value)}
+    placeholder="মাস (যেমন: মার্চ ২০২৬)"
+    className="w-full p-3 rounded-xl text-black mb-4 text-center font-semibold"
+  />
 
       {editMode && (
         <div className="bg-white text-black p-4 rounded-xl space-y-2">
