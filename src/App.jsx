@@ -108,7 +108,7 @@ export default function App() {
   };
 
   if (showSplash) {
-    return <video src="/splash_video.mp4" autoPlay muted playsInline className="w-full h-screen object-cover bg-black" />;
+    return <video src="/splash_video.mp4" autoPlay playsInline className="w-full h-screen object-cover bg-black" />;
   }
 
   if (!unlocked) {
@@ -191,7 +191,7 @@ export default function App() {
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-800 via-[#0f172a] to-black font-sans pb-10 text-slate-300">
       <div className="pt-10 pb-8 text-center">
         <h1 className="text-2xl font-bold text-white tracking-wide">৬১২ বাসা ম্যানেজমেন্ট</h1>
-        <p className="text-white/50 text-sm mt-1">হিসাব-নিকাশ ও ড্যাশবোর্ড</p>
+        <p className="text-white/50 text-sm mt-1">হিসাব-নিকাশ</p>
       </div>
       <div className="px-5 max-w-md mx-auto">
         {activeView === "home" && renderHome()}
