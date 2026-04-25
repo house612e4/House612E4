@@ -88,7 +88,6 @@ export default function App() {
       <video
   src="/splash_video.mp4"
   autoPlay
-  muted
   playsInline
   className="w-full h-screen object-cover"
 />
