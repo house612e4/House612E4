@@ -45,7 +45,7 @@ export default function App() {
   const [unlocked, setUnlocked] = useState(false);
   const [showSplash, setShowSplash] = useState(false);
   const [activeView, setActiveView] = useState("home");
-  const [editMode, setEditMode] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const currentDate = new Date();
   const [monthIndex, setMonthIndex] = useState(currentDate.getMonth());
@@ -75,12 +75,8 @@ export default function App() {
 
   const saveData = async () => {
     const docId = `house_${year}_${monthIndex}`;
-    await setDoc(doc(db, "house", docId), {
-      electric,
-      gas,
-      extra,
-    });
-    setActiveView("home");
+    await setDoc(doc(db, "house", docId), { electric, gas, extra });
+    setIsEditing(false);
   };
 
   const handleLogin = () => {
@@ -89,59 +85,40 @@ export default function App() {
       setTimeout(() => {
         setShowSplash(false);
         setUnlocked(true);
-        setEditMode(false);
       }, 7000);
     } else if (pin === EDIT_PIN) {
       setUnlocked(true);
-      setEditMode(true);
+      setIsEditing(true);
     }
   };
 
   const changeMonth = (offset) => {
     let newMonth = monthIndex + offset;
     let newYear = year;
-    if (newMonth > 11) {
-      newMonth = 0;
-      newYear++;
-    } else if (newMonth < 0) {
-      newMonth = 11;
-      newYear--;
-    }
+    if (newMonth > 11) { newMonth = 0; newYear++; }
+    else if (newMonth < 0) { newMonth = 11; newYear--; }
     setMonthIndex(newMonth);
     setYear(newYear);
   };
 
+  const checkEditAccess = () => {
+    const pass = prompt("এডিট পিন দিন:");
+    if (pass === EDIT_PIN) setIsEditing(true);
+    else alert("ভুল পিন!");
+  };
+
   if (showSplash) {
-    return (
-      <video
-        src="/splash_video.mp4"
-        autoPlay
-        muted
-        playsInline
-        className="w-full h-screen object-cover bg-black"
-      />
-    );
+    return <video src="/splash_video.mp4" autoPlay muted playsInline className="w-full h-screen object-cover bg-black" />;
   }
 
   if (!unlocked) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0f172a] px-5">
-        <div className="bg-slate-800/80 p-8 rounded-3xl border border-slate-700 shadow-2xl w-full max-w-sm backdrop-blur-md">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl text-emerald-400 mb-1">🏠</h1>
-            <h2 className="text-xl font-medium text-slate-200">৬১২ বাসা ম্যানেজমেন্ট</h2>
-          </div>
-          <input
-            type="password"
-            autoComplete="off"
-            value={pin}
-            onChange={(e) => setPin(e.target.value)}
-            className="w-full p-4 bg-slate-900 border border-slate-700 rounded-2xl text-center text-xl text-white tracking-[0.5em] focus:outline-none focus:border-emerald-500 transition-colors mb-4"
-            placeholder="PIN"
-          />
-          <button onClick={handleLogin} className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 rounded-2xl transition-colors">
-            লগইন করুন
-          </button>
+        <div className="bg-slate-800/80 p-8 rounded-3xl border border-slate-700 shadow-2xl w-full max-w-sm backdrop-blur-md text-center">
+          <h1 className="text-3xl mb-1">🏠</h1>
+          <h2 className="text-xl font-medium text-slate-200 mb-6">৬১২ বাসা ম্যানেজমেন্ট</h2>
+          <input type="password" value={pin} onChange={(e) => setPin(e.target.value)} className="w-full p-4 bg-slate-900 border border-slate-700 rounded-2xl text-center text-xl text-white tracking-[0.5em] mb-4 outline-none" placeholder="PIN" />
+          <button onClick={handleLogin} className="w-full bg-emerald-600 text-white font-medium py-3 rounded-2xl">লগইন</button>
         </div>
       </div>
     );
@@ -151,174 +128,94 @@ export default function App() {
   const perPerson = total / MEMBERS.length;
 
   const renderHome = () => (
-    <div className="animate-fade-in space-y-6">
-      <div className="bg-[#1e293b] rounded-3xl p-5 border border-slate-700 shadow-lg">
+    <div className="space-y-6 animate-fade-in">
+      <div className="bg-[#1e293b] rounded-3xl p-5 border border-slate-700">
         <div className="flex justify-between items-center bg-[#0f172a] rounded-2xl p-4 border border-slate-600 mb-6">
-          <button onClick={() => changeMonth(-1)} className="text-slate-400 hover:text-white px-2 py-1 text-2xl">&lt;</button>
-          <h2 className="text-2xl font-bold text-white tracking-wide">
-            {BANGLA_MONTHS[monthIndex]} - {toBanglaDigit(year)}
-          </h2>
-          <button onClick={() => changeMonth(1)} className="text-slate-400 hover:text-white px-2 py-1 text-2xl">&gt;</button>
+          <button onClick={() => changeMonth(-1)} className="text-slate-400 text-2xl px-2">&lt;</button>
+          <h2 className="text-2xl font-bold text-white">{BANGLA_MONTHS[monthIndex]} - {toBanglaDigit(year)}</h2>
+          <button onClick={() => changeMonth(1)} className="text-slate-400 text-2xl px-2">&gt;</button>
         </div>
-        
-        <div className="flex justify-between items-end px-2">
-          <div>
-            <p className="text-sm text-slate-400 mb-1">জনপ্রতি বিল</p>
-            <p className="text-xl md:text-2xl font-bold text-slate-200">৳ {toBanglaDigit(perPerson.toFixed(0))}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-slate-400 mb-1">সর্বমোট বিল</p>
-            <p className="text-xl md:text-2xl font-bold text-slate-200">৳ {toBanglaDigit(total)}</p>
-          </div>
+        <div className="flex justify-between px-2">
+          <div><p className="text-xs text-slate-400">জনপ্রতি বিল</p><p className="text-2xl font-bold text-emerald-400">৳ {toBanglaDigit(perPerson.toFixed(0))}</p></div>
+          <div className="text-right"><p className="text-xs text-slate-400">সর্বমোট বিল</p><p className="text-2xl font-bold text-slate-200">৳ {toBanglaDigit(total)}</p></div>
         </div>
       </div>
-
       <div className="grid grid-cols-2 gap-4">
-        <button onClick={() => setActiveView("members")} className="bg-[#d946ef] rounded-3xl p-6 h-40 flex items-center justify-center shadow-md active:scale-95 transition-transform">
-          <span className="text-2xl font-bold text-white text-center leading-relaxed">সদস্যদের<br/>তালিকা</span>
-        </button>
-        
-        <button onClick={() => setActiveView("expenses")} className="bg-[#7c3aed] rounded-3xl p-6 h-40 flex items-center justify-center shadow-md active:scale-95 transition-transform">
-          <span className="text-2xl font-bold text-white text-center">খরচ সমূহ</span>
-        </button>
-        
-        <button onClick={() => setActiveView("rules")} className="bg-[#b91c1c] rounded-3xl p-6 h-40 flex items-center justify-center shadow-md active:scale-95 transition-transform">
-          <span className="text-2xl font-bold text-white text-center leading-relaxed">পরিষ্কারের<br/>নিয়ম</span>
-        </button>
-        
-        <button onClick={() => setActiveView("schedule")} className="bg-[#5eead4] rounded-3xl p-6 h-40 flex items-center justify-center shadow-md active:scale-95 transition-transform">
-          <span className="text-2xl font-bold text-slate-800 text-center leading-relaxed">পরিষ্কারের<br/>সিডিউল</span>
-        </button>
-      </div>
-    </div>
-  );
-
-  const renderMembers = () => (
-    <div className="animate-fade-in">
-      <button onClick={() => setActiveView("home")} className="mb-6 text-emerald-400 flex items-center gap-2">
-        <span className="text-xl">&larr;</span> ড্যাশবোর্ডে ফিরুন
-      </button>
-      <h2 className="text-xl font-medium text-slate-300 mb-4 px-2">সদস্যদের তালিকা</h2>
-      <div className="space-y-3">
-        {MEMBERS.map((m, i) => (
-          <div key={i} className="bg-slate-800 p-4 rounded-2xl flex items-center gap-4">
-            <img src={m.img} alt={m.name} className="w-16 h-16 rounded-full object-cover border-2 border-slate-600" onError={(e)=> { e.target.src = `https://ui-avatars.com/api/?name=${m.name}&background=334155&color=10b981` }}/>
-            <div className="flex-1">
-              <p className="text-xl font-bold text-white">{m.name}</p>
-              <p className="text-sm text-slate-400">রুমমেট</p>
-            </div>
-            <div className="pr-2 text-right">
-               <p className="text-sm text-slate-400">মোট বিল</p>
-               <p className="text-lg font-bold text-emerald-400">৳ {toBanglaDigit(perPerson.toFixed(0))}</p>
-            </div>
-          </div>
-        ))}
+        <button onClick={() => setActiveView("members")} className="bg-[#d946ef] rounded-3xl p-6 h-40 font-bold text-2xl text-white">সদস্যদের<br/>তালিকা</button>
+        <button onClick={() => setActiveView("expenses")} className="bg-[#7c3aed] rounded-3xl p-6 h-40 font-bold text-2xl text-white">খরচ সমূহ</button>
+        <button onClick={() => setActiveView("rules")} className="bg-[#b91c1c] rounded-3xl p-6 h-40 font-bold text-2xl text-white">পরিষ্কারের<br/>নিয়ম</button>
+        <button onClick={() => setActiveView("schedule")} className="bg-[#5eead4] rounded-3xl p-6 h-40 font-bold text-2xl text-slate-800">পরিষ্কারের<br/>সিডিউল</button>
       </div>
     </div>
   );
 
   const renderExpenses = () => (
     <div className="animate-fade-in">
-      <button onClick={() => setActiveView("home")} className="mb-6 text-emerald-400 flex items-center gap-2">
-        <span className="text-xl">&larr;</span> ড্যাশবোর্ডে ফিরুন
-      </button>
-      <h2 className="text-xl font-medium text-slate-300 mb-4 px-2">মাসের খরচের বিবরণ</h2>
-      
-      <div className="bg-slate-800 p-5 rounded-3xl space-y-4 mb-6">
-        <div className="flex justify-between border-b border-slate-700 pb-3">
-          <span className="text-slate-300 text-lg">বাসা ভাড়া</span>
-          <span className="text-white font-bold text-lg">৳ {toBanglaDigit(RENT)}</span>
-        </div>
-        <div className="flex justify-between border-b border-slate-700 pb-3">
-          <span className="text-slate-300 text-lg">বিদ্যুৎ বিল</span>
-          <span className="text-white font-bold text-lg">৳ {toBanglaDigit(electric)}</span>
-        </div>
-        <div className="flex justify-between border-b border-slate-700 pb-3">
-          <span className="text-slate-300 text-lg">গ্যাস বিল</span>
-          <span className="text-white font-bold text-lg">৳ {toBanglaDigit(gas)}</span>
-        </div>
-        <div className="flex justify-between pb-1">
-          <span className="text-slate-300 text-lg">অন্যান্য খরচ</span>
-          <span className="text-white font-bold text-lg">৳ {toBanglaDigit(extra)}</span>
-        </div>
+      <button onClick={() => {setActiveView("home"); setIsEditing(false);}} className="mb-6 text-emerald-400">&larr; ফিরে যান</button>
+      <div className="bg-slate-800 p-6 rounded-3xl space-y-4 mb-6">
+        <div className="flex justify-between border-b border-slate-700 pb-3"><span className="text-slate-300">বাসা ভাড়া</span><span className="text-white font-bold">৳ {toBanglaDigit(RENT)}</span></div>
+        <div className="flex justify-between border-b border-slate-700 pb-3"><span className="text-slate-300">বিদ্যুৎ বিল</span><span className="text-white font-bold">৳ {toBanglaDigit(electric)}</span></div>
+        <div className="flex justify-between border-b border-slate-700 pb-3"><span className="text-slate-300">গ্যাস বিল</span><span className="text-white font-bold">৳ {toBanglaDigit(gas)}</span></div>
+        <div className="flex justify-between"><span className="text-slate-300">অন্যান্য খরচ</span><span className="text-white font-bold">৳ {toBanglaDigit(extra)}</span></div>
       </div>
-
-      {editMode && (
+      {!isEditing ? (
+        <button onClick={checkEditAccess} className="w-full bg-slate-700 text-slate-200 py-4 rounded-2xl font-bold">হিসাব সংশোধন করুন</button>
+      ) : (
         <div className="bg-slate-900 p-5 rounded-3xl border border-blue-500/30 space-y-4">
-          <h3 className="text-blue-400 font-medium text-center">নতুন খরচ যোগ করুন</h3>
-          <div className="flex items-center gap-3">
-            <label className="w-24 text-slate-400">বিদ্যুৎ বিল</label>
-            <input type="number" value={electric || ""} onChange={e=>setElectric(Number(e.target.value))} className="flex-1 bg-slate-800 border border-slate-700 p-3 rounded-xl text-white text-center focus:outline-none"/>
-          </div>
-          <div className="flex items-center gap-3">
-            <label className="w-24 text-slate-400">গ্যাস বিল</label>
-            <input type="number" value={gas || ""} onChange={e=>setGas(Number(e.target.value))} className="flex-1 bg-slate-800 border border-slate-700 p-3 rounded-xl text-white text-center focus:outline-none"/>
-          </div>
-          <div className="flex items-center gap-3">
-            <label className="w-24 text-slate-400">অন্যান্য</label>
-            <input type="number" value={extra || ""} onChange={e=>setExtra(Number(e.target.value))} className="flex-1 bg-slate-800 border border-slate-700 p-3 rounded-xl text-white text-center focus:outline-none"/>
-          </div>
-          <button onClick={saveData} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl mt-4">
-            আপডেট সেভ করুন
-          </button>
+          <input type="number" placeholder="বিদ্যুৎ" value={electric || ""} onChange={e=>setElectric(Number(e.target.value))} className="w-full bg-slate-800 p-3 rounded-xl text-white text-center" />
+          <input type="number" placeholder="গ্যাস" value={gas || ""} onChange={e=>setGas(Number(e.target.value))} className="w-full bg-slate-800 p-3 rounded-xl text-white text-center" />
+          <input type="number" placeholder="অন্যান্য" value={extra || ""} onChange={e=>setExtra(Number(e.target.value))} className="w-full bg-slate-800 p-3 rounded-xl text-white text-center" />
+          <button onClick={saveData} className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl">আপডেট সেভ করুন</button>
         </div>
       )}
     </div>
   );
 
-  const renderSchedule = () => (
-    <div className="animate-fade-in">
-      <button onClick={() => setActiveView("home")} className="mb-6 text-emerald-400 flex items-center gap-2">
-        <span className="text-xl">&larr;</span> ড্যাশবোর্ডে ফিরুন
-      </button>
-      <div className="bg-[#5eead4] p-6 rounded-3xl">
-        <h2 className="text-2xl font-bold mb-6 text-slate-900 text-center">পরিষ্কারের সিডিউল</h2>
-        <div className="space-y-4">
-          {getSchedule().map((s, i) => (
-            <div key={i} className="flex justify-between items-center bg-white/40 p-4 rounded-2xl shadow-sm">
-              <span className="text-slate-900 font-bold text-lg">{s.name}</span>
-              <span className="bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-medium">{toBanglaDigit(s.date)} তারিখ</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderRules = () => (
-    <div className="animate-fade-in">
-      <button onClick={() => setActiveView("home")} className="mb-6 text-emerald-400 flex items-center gap-2">
-        <span className="text-xl">&larr;</span> ড্যাশবোর্ডে ফিরুন
-      </button>
-      <div className="bg-[#b91c1c] p-6 rounded-3xl">
-        <h2 className="text-2xl font-bold mb-6 text-white text-center">পরিষ্কারের নিয়মাবলি</h2>
-        <div className="space-y-4">
-          {rules.map((r, i) => (
-            <div key={i} className="flex gap-4 items-start bg-black/20 p-4 rounded-2xl">
-              <div className="bg-white text-red-700 rounded-full w-6 h-6 flex items-center justify-center font-bold shrink-0 mt-0.5">✓</div>
-              <p className="text-white text-sm leading-relaxed">{r}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
   return (
-    <div className="min-h-screen bg-[#0f172a] font-sans pb-10">
-      <div className="pt-10 pb-6">
-        <h1 className="text-2xl font-bold text-center text-teal-400 tracking-wide">
-          ৬১২ বাসা ম্যানেজমেন্ট
-        </h1>
-        <p className="text-center text-slate-400 text-sm mt-1">হিসাব-নিকাশ ও ড্যাশবোর্ড</p>
+    <div className="min-h-screen bg-[#0f172a] font-sans pb-10 text-slate-300">
+      <div className="pt-10 pb-6 text-center">
+        <h1 className="text-2xl font-bold text-teal-400">৬১২ বাসা ম্যানেজমেন্ট</h1>
+        <p className="text-slate-400 text-sm">হিসাব-নিকাশ ও ড্যাশবোর্ড</p>
       </div>
-
       <div className="px-5 max-w-md mx-auto">
         {activeView === "home" && renderHome()}
-        {activeView === "members" && renderMembers()}
         {activeView === "expenses" && renderExpenses()}
-        {activeView === "schedule" && renderSchedule()}
-        {activeView === "rules" && renderRules()}
+        {activeView === "members" && (
+          <div className="animate-fade-in">
+            <button onClick={() => setActiveView("home")} className="mb-6 text-emerald-400">&larr; ফিরে যান</button>
+            <div className="space-y-3">
+              {MEMBERS.map((m, i) => (
+                <div key={i} className="bg-slate-800 p-4 rounded-2xl flex items-center gap-4">
+                  <img src={m.img} className="w-16 h-16 rounded-full object-cover" onError={(e)=>e.target.src=`https://ui-avatars.com/api/?name=${m.name}&background=334155&color=10b981`} />
+                  <div className="flex-1"><p className="text-xl font-bold text-white">{m.name}</p><p className="text-sm text-slate-400">রুমমেট</p></div>
+                  <p className="text-lg font-bold text-emerald-400">৳ {toBanglaDigit(perPerson.toFixed(0))}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {activeView === "schedule" && (
+          <div className="animate-fade-in">
+            <button onClick={() => setActiveView("home")} className="mb-6 text-emerald-400">&larr; ফিরে যান</button>
+            <div className="bg-[#5eead4] p-6 rounded-3xl text-slate-900">
+              <h2 className="text-2xl font-bold mb-6 text-center">পরিষ্কারের সিডিউল</h2>
+              {getSchedule().map((s, i) => (
+                <div key={i} className="flex justify-between bg-white/40 p-4 rounded-2xl mb-2 font-bold"><span>{s.name}</span><span>{toBanglaDigit(s.date)} তারিখ</span></div>
+              ))}
+            </div>
+          </div>
+        )}
+        {activeView === "rules" && (
+          <div className="animate-fade-in">
+            <button onClick={() => setActiveView("home")} className="mb-6 text-emerald-400">&larr; ফিরে যান</button>
+            <div className="bg-[#b91c1c] p-6 rounded-3xl text-white">
+              <h2 className="text-2xl font-bold mb-6 text-center">পরিষ্কারের নিয়মাবলি</h2>
+              {rules.map((r, i) => (
+                <div key={i} className="flex gap-4 bg-black/20 p-4 rounded-2xl mb-2"><span className="font-bold">✓</span><p className="text-sm">{r}</p></div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
