@@ -285,6 +285,28 @@ button{font-family:inherit;}
 .search-result-item .sr-title{font-size:15px;font-weight:500;}
 .search-result-item .sr-snippet{font-size:13px;color:var(--text-2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .search-empty{text-align:center;color:var(--text-3);font-size:14px;padding:60px 20px;}
+
+.toast-container{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{background:var(--surface-2);border:1px solid var(--border-2);color:var(--text);padding:12px 20px;border-radius:24px;font-size:14px;font-weight:500;box-shadow:0 4px 24px rgba(0,0,0,0.4);animation:toastIn 0.25s ease;white-space:nowrap;pointer-events:auto;}
+.toast.success{border-color:var(--green);color:var(--green);}
+.toast.error{border-color:#f87171;color:#f87171;}
+.toast.info{border-color:var(--cyan);color:var(--cyan);}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+@keyframes toastOut{from{opacity:1;}to{opacity:0;transform:translateY(8px);}}
+
+#scrollBottomBtn{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom));right:16px;width:40px;height:40px;border-radius:50%;background:var(--surface-2);border:1px solid var(--border-2);color:var(--text);cursor:pointer;display:none;align-items:center;justify-content:center;z-index:30;box-shadow:0 2px 12px rgba(0,0,0,0.3);}
+#scrollBottomBtn.show{display:flex;}
+#scrollBottomBtn svg{width:18px;height:18px;}
+
+#charCounter{position:absolute;right:52px;bottom:18px;font-size:11px;color:var(--text-3);display:none;}
+#charCounter.show{display:block;}
+#charCounter.warn{color:var(--amber,#f59e0b);}
+#charCounter.danger{color:#f87171;}
+
+#offlineBanner{position:fixed;top:0;left:0;right:0;background:#f87171;color:#fff;text-align:center;padding:8px;font-size:13px;font-weight:600;z-index:999;display:none;}
+#offlineBanner.show{display:block;}
+
+#pwaInstallBtn{display:none;position:fixed;bottom:calc(130px + env(safe-area-inset-bottom));right:16px;padding:10px 16px;border-radius:20px;background:linear-gradient(135deg,var(--cyan-deep),var(--violet));color:#fff;border:none;font-size:13px;font-weight:600;cursor:pointer;z-index:30;box-shadow:0 4px 16px rgba(0,0,0,0.3);}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
@@ -292,6 +314,12 @@ button{font-family:inherit;}
 </head>
 <body>
 <div id="pulseBg"></div>
+<div id="toastContainer" class="toast-container"></div>
+<button id="scrollBottomBtn" onclick="chatEl.scrollTop=chatEl.scrollHeight">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div id="offlineBanner">📡 ইন্টারনেট সংযোগ নেই — পুনরায় সংযুক্ত হলে কাজ শুরু হবে</div>
+<button id="pwaInstallBtn" onclick="installPWA()">📲 অ্যাপ ইনস্টল করুন</button>
 
 <!-- ===== AUTH SCREEN ===== -->
 <div id="authScreen">
@@ -684,8 +712,8 @@ button{font-family:inherit;}
         <button class="mo selected" onclick="sel('auto','Auto','আরমান','auto','p-ar',this)"><span class="mo-icon" style="background:linear-gradient(135deg,var(--cyan-deep),var(--violet),var(--blue));color:#fff;">⚡</span><div class="mo-info"><div class="mn">Auto</div><div class="md">প্রশ্ন বুঝে সেরা মডেল বেছে নেবে</div></div><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button>
         <div class="dd-div"></div>
         <div class="mg-label">MtStudio AI</div>
-        <button class="mo" onclick="sel('arman','Pro','আরমান','grok-4.3','p-ar',this)"><span class="mo-icon ic-ar">✦</span><div class="mo-info"><div class="mn">আরমান Pro</div><div class="md">সর্বোচ্চ নির্ভুলতা</div></div><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button>
-        <button class="mo" onclick="sel('arman','Flash','আরমান','grok-build-0.1','p-ar',this)"><span class="mo-icon ic-ar">✦</span><div class="mo-info"><div class="mn">আরমান Flash</div><div class="md">দ্রুততম উত্তর</div></div><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button>
+        <button class="mo" onclick="sel('arman','Pro','আরমান','grok-3','p-ar',this)"><span class="mo-icon ic-ar">✦</span><div class="mo-info"><div class="mn">আরমান Pro</div><div class="md">সর্বোচ্চ সক্ষমতা</div></div><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button>
+        <button class="mo" onclick="sel('arman','Flash','আরমান','grok-3-mini','p-ar',this)"><span class="mo-icon ic-ar">✦</span><div class="mo-info"><div class="mn">আরমান Flash</div><div class="md">দ্রুত ও হালকা</div></div><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button>
         <div class="dd-div"></div>
         <div class="mg-label">Anthropic Claude</div>
         <button class="mo" onclick="sel('claude','Sonnet 4.6','Claude','claude-sonnet-4-6','p-cl',this)"><span class="mo-icon ic-cl">◆</span><div class="mo-info"><div class="mn">Claude Sonnet 4.6</div><div class="md">Balanced</div></div><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button>
@@ -710,7 +738,7 @@ button{font-family:inherit;}
     <div id="researchChipRow" style="display:none;padding:0 4px 8px;">
       <span class="mode-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20 15 15 0 010-20"/></svg>Deep research<svg onclick="exitResearchMode()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:15px;height:15px;margin-left:4px;cursor:pointer;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
     </div>
-    <div class="input-box" id="inputBox">
+    <div style="position:relative;"><span id="charCounter"></span><div class="input-box" id="inputBox">
       <button class="in-plus" onclick="openPlusSheet()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
       <textarea id="input" rows="1" placeholder="আরমানকে জিজ্ঞেস করুন"></textarea>
       <button class="in-mic" id="micBtn" onclick="toggleVoiceInput()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg></button>
@@ -719,7 +747,7 @@ button{font-family:inherit;}
       <button class="stop-btn" id="stopBtn" onclick="stopGeneration()"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
     </div>
   </div>
-</div>
+</div></div>
 <div id="ddOverlay" onclick="closeDD()"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -746,7 +774,7 @@ let cType='auto',cVersion='Auto',cBrand='আরমান',cModelId='auto',cPill=
 /* ===================== CHAT SESSION STORE ======================
    chatStore = [{ id, title, createdAt, updatedAt, pinned, messages:[{role,content,pill,attachments}] }]
 =================================================================== */
-let chatStore = JSON.parse(safeStorage.get('mtstudio_chatstore_v2','[]'));
+let chatStore = (()=>{ try{ return JSON.parse(safeStorage.get('mtstudio_chatstore_v2','[]'))||[]; }catch(e){ safeStorage.remove('mtstudio_chatstore_v2'); return []; } })();
 let activeChatId = null;
 let memoryOn = safeStorage.get('mtstudio_memory_on','1')==='1';
 let currentUser=null, authMode='signin';
@@ -794,7 +822,7 @@ async function syncChatToD1(chat){
 async function syncMessagesToD1(chat){
   if(!chat || !currentUser || !chat.messages.length) return;
   const msgs = chat.messages.map((m,i)=>({
-    id: chat.id+'_msg_'+i,
+    id: chat.id+'_msg_'+i+'_'+(m.created_at||Date.now()+i).toString(36),
     chat_id: chat.id,
     role: m.role,
     content: m.isHtml ? '[media]' : (m.content||''),
@@ -959,6 +987,9 @@ function flushAnalyticsQueue(){
   }, 1500);
 }
 logAnalyticsEvent('session_start', {ua: navigator.userAgent.slice(0,120)});
+// Page close/hide — analytics flush
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') flushAnalyticsQueue(); });
+window.addEventListener('beforeunload', ()=>{ flushAnalyticsQueue(); });
 
 // ====== UI control ======
 function openDrawer(){renderHistory();document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');}
@@ -993,7 +1024,15 @@ function applyUiLanguage(){
   const langBtn = document.getElementById('langToggleLabel');
   if(langBtn) langBtn.textContent = uiLang==='bn' ? 'বাংলা' : 'English';
 }
-function sel(type,ver,brand,id,pill,btn){cType=type;cVersion=ver;cBrand=brand;cModelId=id;cPill=pill;document.getElementById('brandName').textContent=brand;document.getElementById('versionName').textContent=ver;document.querySelectorAll('.mo').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');closeDD();}
+function sel(type,ver,brand,id,pill,btn){
+  activeGemPrompt=null;
+  cType=type;cVersion=ver;cBrand=brand;cModelId=id;cPill=pill;
+  document.getElementById('brandName').textContent=brand;
+  document.getElementById('versionName').textContent=ver;
+  document.querySelectorAll('.mo').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  closeDD();
+}
 function getPill(p){return p==='p-ar'?'আরমান':p==='p-cl'?'Claude':p==='p-gp'?'GPT':'Gemini';}
 function escapeHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
@@ -1043,7 +1082,7 @@ async function generateMusicPrompt(){
       method:'POST', headers:{'Content-Type':'application/json','X-MT-Key':MT_KEY},
       body: JSON.stringify({
         message: `তুমি একজন AI music prompt expert। নিচের গানের ধারণা থেকে Suno AI-এর জন্য একটি perfect music generation prompt তৈরি করো। Prompt-এ style, mood, instruments, tempo, vocals সব specify করো। শুধু prompt-টাই দাও, কোনো ব্যাখ্যা নয়।\n\nধারণা: ${idea}`,
-        model:'grok-4.3', modelType:'arman', history:[], memory:false,
+        model:'grok-3', modelType:'arman', history:[], memory:false,
         conversationId:'music-'+getUserKey()
       })
     });
@@ -1094,7 +1133,7 @@ function openChangePasswordPanel(){
 }
 
 /* ============ Personal Intelligence ============ */
-let personalIntel = JSON.parse(safeStorage.get('mtstudio_personal_intel','{}'));
+let personalIntel = (()=>{ try{ return JSON.parse(safeStorage.get('mtstudio_personal_intel','{}'))||{}; }catch(e){ return {}; } })();
 function openPersonalIntelPanel(){
   closeAccount();
   document.getElementById('piProfession').value = personalIntel.profession || '';
@@ -1156,7 +1195,7 @@ async function importMemory(){
       method:'POST', headers:{'Content-Type':'application/json','X-MT-Key':MT_KEY},
       body: JSON.stringify({
         message:'[memory import]',
-        model:'grok-build-0.1', modelType:'arman', history:[],
+        model:'grok-3-mini', modelType:'arman', history:[],
         memory:true, memoryOverride: combined,
         conversationId: uid+'_'+activeChatId,
       })
@@ -1219,7 +1258,7 @@ function startLiveListening(){
     try{
       const res=await fetch(WORKER_URL,{
         method:'POST', headers:{'Content-Type':'application/json','X-MT-Key':MT_KEY},
-        body: JSON.stringify({message:finalText, model:'grok-build-0.1', modelType:'arman', history:[], memory:false, conversationId:'live-voice'})
+        body: JSON.stringify({message:finalText, model:'grok-3-mini', modelType:'arman', history:[], memory:false, conversationId:'live-voice'})
       });
       const data=await res.json();
       const reply=data.reply||'...';
@@ -1229,7 +1268,12 @@ function startLiveListening(){
       // TTS — Web Speech Synthesis
       if('speechSynthesis' in window){
         const utt=new SpeechSynthesisUtterance(reply);
-        utt.lang='bn-BD'; utt.rate=0.95;
+        // Bengali voice থাকলে bn-BD, না থাকলে English fallback
+        const voices = window.speechSynthesis.getVoices();
+        const bnVoice = voices.find(v => v.lang.startsWith('bn'));
+        utt.lang = bnVoice ? 'bn-BD' : 'en-US';
+        if(bnVoice) utt.voice = bnVoice;
+        utt.rate=0.9;
         utt.onend=()=>{ if(liveMode){ orb.style.background='linear-gradient(135deg,var(--cyan-deep),var(--violet))'; orb.style.animation='orbPulse 1.5s infinite'; statusEl.textContent='আরমান শুনছে...'; transcriptEl.textContent=''; setTimeout(startLiveListening, 500); } };
         window.speechSynthesis.speak(utt);
       }else{
@@ -1237,12 +1281,12 @@ function startLiveListening(){
       }
     }catch(e){ statusEl.textContent='সমস্যা হয়েছে। আবার চেষ্টা করুন।'; }
   };
-  liveRecognizer.onerror=()=>{ if(liveMode) setTimeout(startLiveListening, 1000); };
+  liveRecognizer.onerror=(ev)=>{ isRecording=false; document.getElementById('micBtn')?.classList.remove('recording'); if(liveMode) setTimeout(startLiveListening, 1000); };
   try{ liveRecognizer.start(); }catch(e){}
 }
 
 /* ============ Gem Manager (আলিজা ম্যানেজার) — কাস্টম পার্সোনা ============ */
-let gemStore = JSON.parse(safeStorage.get('mtstudio_gems_v1','[]'));
+let gemStore = (()=>{ try{ return JSON.parse(safeStorage.get('mtstudio_gems_v1','[]'))||[]; }catch(e){ return []; } })();
 let editingGemId = null;
 function saveGemStore(){ safeStorage.set('mtstudio_gems_v1', JSON.stringify(gemStore)); }
 function openGemManager(){
@@ -1324,7 +1368,7 @@ function rebuildGemMenu(){
 let activeGemPrompt = null;
 function selGem(gemId, btn){
   const g = gemStore.find(x=>x.id===gemId); if(!g) return;
-  cType='arman'; cModelId='grok-4.3'; cPill='p-ar'; cBrand=g.name; cVersion='';
+  cType='arman'; cModelId='grok-3'; cPill='p-ar'; cBrand=g.name; cVersion='';
   activeGemPrompt = g.prompt;
   document.getElementById('brandName').textContent = g.name;
   document.getElementById('versionName').textContent = '';
@@ -1333,8 +1377,6 @@ function selGem(gemId, btn){
   closeDD();
 }
 // clear gem override whenever a normal model/Auto is picked
-const _origSel = sel;
-sel = function(type,ver,brand,id,pill,btn){ activeGemPrompt=null; _origSel(type,ver,brand,id,pill,btn); };
 rebuildGemMenu();
 
 /* ============ Tonimabook (নোটবুক) — ফাইল আপলোড করে প্রশ্ন ============ */
@@ -1434,11 +1476,12 @@ async function runCanvasCode(){
 
   previewWrap.style.display='none';
   btn.disabled=true; btn.textContent='লোড হচ্ছে...';
-  outputEl.textContent='Python ইঞ্জিন লোড হচ্ছে (প্রথমবার কিছুটা সময় লাগতে পারে)...';
+  outputEl.textContent='⏳ Python ইঞ্জিন লোড হচ্ছে (~30 সেকেন্ড লাগতে পারে প্রথমবার)...';
   try{
     if(!pyodideInstance){
+      const timeoutPromise = new Promise((_,reject) => setTimeout(()=>reject(new Error('Timeout: Python ইঞ্জিন লোড হতে বেশি সময় নিচ্ছে। Wifi-এ আবার চেষ্টা করুন।')), 60000));
       await loadPyodide_();
-      pyodideInstance = await window.loadPyodide();
+      pyodideInstance = await Promise.race([window.loadPyodide(), timeoutPromise]);
     }
     btn.textContent='চলছে...';
     let capturedOutput = '';
@@ -1513,14 +1556,23 @@ async function send(){
     alert('আজকের ব্যবহারের সীমা ('+DAILY_MESSAGE_LIMIT+' মেসেজ) শেষ হয়ে গেছে। আগামীকাল আবার চেষ্টা করুন।');
     return;
   }
-  if(imageModeOn){ inputEl.value=''; updateInputState(); return sendInlineImage(text); }
-  incrementUsage();
+
   const atts = pendingAttachments.slice();
   const wasResearch = researchModeOn;
   inputEl.value=''; inputEl.style.height='auto';
   pendingAttachments=[]; renderAttachStrip();
   if(wasResearch) exitResearchMode();
   updateInputState();
+
+  // ছবি attach থাকলে — vision (Claude দিয়ে analyze)
+  // image mode চালু কিন্তু ছবি নেই — image generation (Grok Imagine)
+  if(imageModeOn && atts.length===0){
+    exitImageMode();
+    return sendInlineImage(text);
+  }
+
+  if(imageModeOn) exitImageMode();
+  incrementUsage();
   await sendMessageCore(text, atts, {research: wasResearch});
 }
 
@@ -1576,6 +1628,8 @@ function renderMarkdownTables(html){
 }
 function renderFull(text){ return renderMarkdownTables(md(text)); }
 function activateRichContent(container){
+  addCodeCopyButtons(container);
+  lazyLoadImages(container);
   try{
     if(window.mermaid){
       const nodes = container.querySelectorAll('.mermaid');
@@ -1626,10 +1680,13 @@ function ensureActiveChat(){
 }
 function newChat(){
   activeChatId = null;
+  exitImageMode();
+  exitResearchMode();
   pendingAttachments = [];
   renderAttachStrip();
   chatEl.innerHTML='';
   renderWelcome();
+  document.getElementById('input').blur();
 }
 function loadChat(chatId){
   const chat = chatStore.find(c=>c.id===chatId);
@@ -1682,11 +1739,12 @@ function renderHistory(){
 }
 function chatRowHtml(h){
   const active = h.id===activeChatId ? 'active-chat':'';
+  const timeAgo = smartTime(h.updatedAt);
   const pinIcon = h.pinned
     ? '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.5 6.5L20 10l-5.5 3.5L16 20l-4-3.5L8 20l1.5-6.5L4 10l6.5-1.5z"/></svg>'
     : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 17v5M9 3h6l-1 6 3 3-1 2H8l-1-2 3-3z"/></svg>';
   return `<button class="drawer-recent-item ${active}" onclick="loadChat('${h.id}');closeDrawer()" oncontextmenu="event.preventDefault();openChatOptions('${h.id}')">
-      <span class="drc-title">${escapeHtml(h.title||'নতুন চ্যাট')}</span>
+      <span class="drc-title">${escapeHtml(h.title||'নতুন চ্যাট')}</span><span style="font-size:11px;color:var(--text-3);flex-shrink:0;margin-left:4px;">${timeAgo}</span>
       <button class="drc-del" title="পিন" onclick="event.stopPropagation();togglePinChat('${h.id}')" style="color:${h.pinned?'var(--cyan)':'var(--text-3)'};width:22px;height:22px;">${pinIcon}</button>
       <button class="drc-del" title="আরও" onclick="event.stopPropagation();openChatOptions('${h.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
     </button>`;
@@ -1897,12 +1955,24 @@ function shareSingleMessage(idx){
   else{ navigator.clipboard?.writeText(text); alert('মেসেজ ক্লিপবোর্ডে কপি হয়েছে'); }
 }
 function copyText(btn, text){
-  navigator.clipboard?.writeText(text).then(()=>{
+  const doFallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+  };
+  const showSuccess = () => {
     const orig = btn.innerHTML;
     btn.classList.add('success');
     btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
-    setTimeout(()=>{ btn.classList.remove('success'); btn.innerHTML=orig; },1400);
-  }).catch(()=>{});
+    setTimeout(()=>{ btn.classList.remove('success'); btn.innerHTML=orig; }, 1400);
+    showToast('কপি হয়েছে ✓', 'success', 1500);
+    haptic('light');
+  };
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(showSuccess).catch(()=>{ doFallback(); showSuccess(); });
+  } else { doFallback(); showSuccess(); }
 }
 function showTyping(){const w=document.createElement('div');w.className='msg-group ai';w.id='typing';w.innerHTML=`<div class="msg-content"><div class="bubble"><div class="typing-wrap"><span></span><span></span><span></span></div></div></div>`;chatEl.appendChild(w);chatEl.scrollTop=chatEl.scrollHeight;}
 function hideTyping(){const e=document.getElementById('typing');if(e)e.remove();}
@@ -2006,7 +2076,7 @@ function toggleVoiceInput(){
     inputEl.style.height='auto';inputEl.style.height=Math.min(inputEl.scrollHeight,120)+'px';
     updateInputState();
   };
-  recognizer.onerror = ()=>{ isRecording=false; micBtn.classList.remove('recording'); };
+  recognizer.onerror = (e)=>{ isRecording=false; micBtn.classList.remove('recording'); if(e.error==='not-allowed'||e.error==='permission-denied') alert('মাইক্রোফোন অ্যাক্সেস দিন — Browser Settings → Allow Microphone'); };
   recognizer.onend = ()=>{ isRecording=false; micBtn.classList.remove('recording'); };
   try{ recognizer.start(); }catch(e){ alert('ভয়েস ইনপুট চালু করা যায়নি'); }
 }
@@ -2070,6 +2140,7 @@ async function sendMessageCore(text, attachments, opts){
 
       if(!res.ok && res.status>=500 && i<chain.length-1){
         logAnalyticsEvent('model_fallback', {from:route.type, status:res.status});
+        showRateLimitToast(route.model);
         continue;
       }
 
@@ -2097,6 +2168,8 @@ async function sendMessageCore(text, attachments, opts){
   if(!success && lastError){
     hideTyping();
     appendAiFinal(chat, 'সংযোগে সমস্যা হয়েছে। Worker চেক করুন।', chain[0].pill);
+    showToast('সংযোগে সমস্যা হয়েছে', 'error', 3000);
+    haptic('error');
   }
 
   setGeneratingState(false);
@@ -2110,29 +2183,32 @@ function pickAutoRoute(text, attachments, opts){
   const isResearch = !!opts.research;
   const isCode = /```|function |class |def |import |const /.test(text||'');
 
+  // প্রতিটি route Worker-এ নিজেই fallback করবে (rate limit হলে lighter model-এ)
   if(isResearch || isLong){
     return [
-      {type:'claude', model:'claude-opus-4-7', pill:'p-cl'},
-      {type:'claude', model:'claude-sonnet-4-6', pill:'p-cl'},
-      {type:'arman', model:'grok-4.3', pill:'p-ar'},
+      {type:'claude', model:'claude-opus-4-7', pill:'p-cl'},   // Worker: claude-sonnet → claude-haiku → grok-3
+      {type:'arman',  model:'grok-3',           pill:'p-ar'},   // fallback
     ];
   }
   if(hasImage){
     return [
-      {type:'claude', model:'claude-sonnet-4-6', pill:'p-cl'},
-      {type:'gpt', model:'gpt-4o', pill:'p-gp'},
+      {type:'claude', model:'claude-sonnet-4-6', pill:'p-cl'}, // Vision-capable
+      {type:'gpt',    model:'gpt-4o',            pill:'p-gp'}, // fallback
+      {type:'arman',  model:'grok-3',            pill:'p-ar'}, // grok vision fallback
     ];
   }
   if(isCode){
     return [
       {type:'claude', model:'claude-sonnet-4-6', pill:'p-cl'},
-      {type:'arman', model:'grok-4.3', pill:'p-ar'},
+      {type:'arman',  model:'grok-3',            pill:'p-ar'},
+      {type:'gpt',    model:'gpt-4o',            pill:'p-gp'},
     ];
   }
+  // General conversation — Grok প্রথমে (fastest), তারপর Gemini Flash
   return [
-    {type:'arman', model:'grok-4.3', pill:'p-ar'},
-    {type:'gemini', model:'gemini-2.0-flash', pill:'p-gm'},
-    {type:'claude', model:'claude-sonnet-4-6', pill:'p-cl'},
+    {type:'arman',  model:'grok-3',             pill:'p-ar'},  // Worker: grok-3-mini → gemini-flash → claude-haiku
+    {type:'gemini', model:'gemini-2.0-flash',   pill:'p-gm'},  // fallback
+    {type:'claude', model:'claude-sonnet-4-6',  pill:'p-cl'},  // last resort
   ];
 }
 
@@ -2144,6 +2220,7 @@ function appendAiFinal(chat, replyText, pill, citations){
   persistAndMaybeTitle(chat);
   renderHistory();
   logAnalyticsEvent('response_received', {pill, length:(replyText||'').length, hasCitations:!!citations});
+  haptic('success');
   // D1 background sync
   if(currentUser){
     syncChatToD1(chat).catch(()=>{});
@@ -2197,7 +2274,10 @@ async function handleStreamingResponse(res, chat, pill){
 async function sendInlineImage(prompt){
   removeWelcome();
   const chat = ensureActiveChat();
-  const userMsg = { role:'user', content:prompt, attachments:[] };
+  // pending attachments নাও এবং clear করো
+  const atts = pendingAttachments.slice();
+  pendingAttachments = []; renderAttachStrip();
+  const userMsg = { role:'user', content: prompt || 'ছবি তৈরি করো', attachments: atts };
   chat.messages.push(userMsg);
   renderUserMsgFromStore(userMsg, chat.messages.length-1);
   chatEl.scrollTop = chatEl.scrollHeight;
@@ -2205,17 +2285,19 @@ async function sendInlineImage(prompt){
 
   showTyping();
   try{
-    const res=await fetch(WORKER_URL.replace(/\/$/,'')+'/image-gen',{method:'POST',headers:{'Content-Type':'application/json','X-MT-Key':MT_KEY},body:JSON.stringify({prompt,aspect_ratio:'1:1'})});
+    const res=await fetch(WORKER_URL.replace(/\/$/,'')+'/image-gen',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-MT-Key':MT_KEY},
+      body:JSON.stringify({ prompt: prompt||'creative image', aspect_ratio:'1:1' })
+    });
     const data=await res.json();
     hideTyping();
     let replyHtml;
     if(!res.ok||!data.images){ replyHtml = 'ছবি তৈরি ব্যর্থ হয়েছে: '+(data.error||''); }
-    else{ replyHtml = data.images.map(u=>`<img src="${u}" style="width:100%;border-radius:14px;margin-top:6px;">`).join(''); }
-    const msg = { role:'assistant', content: replyHtml, pill:cPill, time:timeNow(), isHtml:true };
-    chat.messages.push(msg);
-    renderAiMsgFromStore(msg, chat.messages.length-1);
-    chatEl.scrollTop = chatEl.scrollHeight;
-    persistAndMaybeTitle(chat); renderHistory();
+    else{
+      replyHtml = data.images.map(u=>`<img src="${u}" style="width:100%;border-radius:14px;margin-top:6px;" onclick="window.open(this.src)" title="ট্যাপ করলে বড় দেখাবে">`).join('');
+    }
+    appendAiFinal(chat, replyHtml, cPill);
   }catch(e){
     hideTyping();
     appendAiFinal(chat, 'সংযোগে সমস্যা হয়েছে।', cPill);
@@ -2276,6 +2358,152 @@ async function sendTemp(){
 }
 document.getElementById('tempInput').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';});
 document.getElementById('tempInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendTemp();}});
+
+
+/* ============ Toast Notification System ============ */
+function showToast(msg, type='info', duration=2800){
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(()=>{
+    t.style.animation='toastOut 0.3s ease forwards';
+    setTimeout(()=>t.remove(), 300);
+  }, duration);
+}
+
+/* ============ Scroll to Bottom Button ============ */
+const scrollBtn = document.getElementById('scrollBottomBtn');
+chatEl.addEventListener('scroll', ()=>{
+  const near = chatEl.scrollHeight - chatEl.scrollTop - chatEl.clientHeight < 120;
+  scrollBtn.classList.toggle('show', !near && chatEl.scrollHeight > chatEl.clientHeight + 200);
+});
+
+/* ============ Char Counter ============ */
+const charCounter = document.getElementById('charCounter');
+inputEl.addEventListener('input', ()=>{
+  const len = inputEl.value.length;
+  if(len > 200){
+    charCounter.textContent = len + ' অক্ষর';
+    charCounter.className = 'charCounter show' + (len > 800 ? ' danger' : len > 500 ? ' warn' : '');
+    charCounter.style.display = 'block';
+  } else {
+    charCounter.style.display = 'none';
+  }
+});
+
+/* ============ Smart Timestamps ============ */
+function smartTime(ts){
+  if(!ts) return '';
+  const now = Date.now();
+  const diff = now - ts;
+  if(diff < 60000) return 'এইমাত্র';
+  if(diff < 3600000) return Math.floor(diff/60000) + 'মি আগে';
+  if(diff < 86400000) return Math.floor(diff/3600000) + 'ঘ আগে';
+  if(diff < 172800000) return 'গতকাল';
+  return new Date(ts).toLocaleDateString('bn-BD',{day:'numeric',month:'short'});
+}
+
+/* ============ Network Offline Detection ============ */
+const offlineBanner = document.getElementById('offlineBanner');
+window.addEventListener('online', ()=>{ offlineBanner.classList.remove('show'); showToast('ইন্টারনেট সংযোগ পুনরায় হয়েছে ✓', 'success'); });
+window.addEventListener('offline', ()=>{ offlineBanner.classList.add('show'); showToast('ইন্টারনেট সংযোগ নেই', 'error', 5000); });
+if(!navigator.onLine) offlineBanner.classList.add('show');
+
+/* ============ PWA Install Prompt ============ */
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('pwaInstallBtn').style.display = 'block';
+  setTimeout(()=>{ document.getElementById('pwaInstallBtn').style.display = 'none'; }, 15000);
+});
+function installPWA(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(()=>{ deferredPrompt=null; document.getElementById('pwaInstallBtn').style.display='none'; });
+}
+window.addEventListener('appinstalled', ()=>{ showToast('অ্যাপ সফলভাবে ইনস্টল হয়েছে! 🎉', 'success', 4000); });
+
+/* ============ Swipe Drawer (Touch Gesture) ============ */
+let touchStartX = 0;
+document.addEventListener('touchstart', (e)=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
+document.addEventListener('touchend', (e)=>{
+  const diff = e.changedTouches[0].clientX - touchStartX;
+  if(Math.abs(diff) < 50) return;
+  if(diff > 80 && touchStartX < 30) openDrawer();
+  else if(diff < -80) closeDrawer();
+}, {passive:true});
+
+/* ============ Haptic Feedback ============ */
+function haptic(type='light'){
+  if(!navigator.vibrate) return;
+  const patterns = {light:[10], medium:[20], heavy:[40], success:[10,50,10], error:[50,30,50]};
+  navigator.vibrate(patterns[type] || [10]);
+}
+
+/* ============ Keyboard Shortcuts (Desktop) ============ */
+document.addEventListener('keydown', (e)=>{
+  if((e.ctrlKey || e.metaKey)){
+    if(e.key==='k'){ e.preventDefault(); openSearchChats(); }
+    if(e.key==='/'){ e.preventDefault(); inputEl.focus(); }
+    if(e.key==='n'){ e.preventDefault(); newChat(); }
+  }
+  if(e.key==='Escape'){
+    closeDrawer(); closeDD(); closeAccount(); closePlusSheet();
+    document.querySelectorAll('.panel.open').forEach(p=>p.classList.remove('open'));
+  }
+});
+
+/* ============ Code Block Copy Button ============ */
+function addCodeCopyButtons(container){
+  container.querySelectorAll('pre code').forEach(block=>{
+    if(block.parentElement.querySelector('.code-copy-btn')) return;
+    const btn = document.createElement('button');
+    btn.className = 'code-copy-btn';
+    btn.style.cssText = 'position:absolute;top:8px;right:8px;padding:4px 10px;border-radius:8px;border:1px solid var(--border-2);background:var(--surface-3);color:var(--text-2);font-size:11px;cursor:pointer;';
+    btn.textContent = 'কপি';
+    btn.onclick = ()=>{
+      navigator.clipboard?.writeText(block.textContent).then(()=>{ btn.textContent='✓ কপি হয়েছে'; setTimeout(()=>btn.textContent='কপি',1500); });
+    };
+    block.parentElement.style.position='relative';
+    block.parentElement.appendChild(btn);
+  });
+}
+
+/* ============ Error Boundary ============ */
+window.onerror = (msg, src, line, col, err)=>{
+  console.error('[MT Studio Error]', msg, src, line);
+  if(msg && !msg.includes('ResizeObserver')){
+    showToast('একটি সমস্যা হয়েছে — পেজ রিফ্রেশ করুন', 'error', 5000);
+  }
+  return true;
+};
+window.addEventListener('unhandledrejection', (e)=>{
+  console.error('[MT Studio Promise Error]', e.reason);
+});
+
+/* ============ Rate Limit UI Feedback ============ */
+function showRateLimitToast(modelName){
+  showToast(`${modelName} সীমা পূর্ণ — স্বয়ংক্রিয়ভাবে অন্য মডেলে চলে যাচ্ছে...`, 'info', 3000);
+  haptic('medium');
+}
+
+/* ============ Image Lazy Loading ============ */
+function lazyLoadImages(container){
+  container.querySelectorAll('img:not([loading])').forEach(img=>{
+    img.loading = 'lazy';
+  });
+}
+
+/* activateRichContent extended inline below */
+
+/* copyText already has showSuccess — toast added directly in copyText function */
+
+/* appendAiFinal haptic added directly */
+
+/* input resize handled by existing listener */
 
 // ====== init ======
 renderWelcome();
