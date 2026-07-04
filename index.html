@@ -4,6 +4,12 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
 <meta name="theme-color" content="#050B14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MtStudio">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/public/mt_logo.jpeg">
+<script>if('serviceWorker' in navigator){ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }</script>
 <title>MtStudio</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -653,7 +659,108 @@ const chatEl=document.getElementById('chat'),inputEl=document.getElementById('in
 function migrateOldHistory(){ try{ safeStorage.remove('mtstudio_histories'); }catch(e){} }
 migrateOldHistory();
 
-function saveChatStore(){ safeStorage.set('mtstudio_chatstore_v2', JSON.stringify(chatStore)); }
+function saveChatStore(){
+  safeStorage.set('mtstudio_chatstore_v2', JSON.stringify(chatStore));
+  // Background D1 sync (non-blocking)
+  if(currentUser) syncChatToD1(chatStore.slice(0,1)[0]).catch(()=>{});
+}
+
+/* ============ D1 Sync Layer (cross-device) ============ */
+async function d1Fetch(path, opts){
+  const uid = currentUser ? currentUser.uid : null;
+  if(!uid) return null;
+  const res = await fetch(WORKER_URL.replace(/\/$/,'')+'/d1'+path, {
+    ...opts,
+    headers: {
+      'Content-Type':'application/json',
+      'X-MT-Key': MT_KEY,
+      'X-User-Id': uid,
+      ...(opts.headers||{}),
+    }
+  });
+  if(!res.ok) return null;
+  return res.json();
+}
+
+async function syncChatToD1(chat){
+  if(!chat || !currentUser) return;
+  await d1Fetch('/chats', { method:'POST', body: JSON.stringify({
+    id:chat.id, title:chat.title, pinned:chat.pinned?1:0,
+    created_at:chat.createdAt, updated_at:chat.updatedAt
+  })});
+}
+
+async function syncMessagesToD1(chat){
+  if(!chat || !currentUser || !chat.messages.length) return;
+  const msgs = chat.messages.map((m,i)=>({
+    id: chat.id+'_msg_'+i,
+    chat_id: chat.id,
+    role: m.role,
+    content: m.isHtml ? '[media]' : (m.content||''),
+    pill: m.pill||null,
+    time_str: m.time||null,
+    is_html: m.isHtml?1:0,
+    created_at: chat.createdAt + i
+  }));
+  await d1Fetch('/messages', { method:'POST', body: JSON.stringify({ messages: msgs })});
+}
+
+async function loadChatsFromD1(){
+  if(!currentUser) return;
+  const data = await d1Fetch('/chats', { method:'GET' }).catch(()=>null);
+  if(!data || !data.chats || !data.chats.length) return;
+  // D1 থেকে নতুন চ্যাট localStorage-এ merge করা
+  const existingIds = new Set(chatStore.map(c=>c.id));
+  let added = 0;
+  data.chats.forEach(dc=>{
+    if(!existingIds.has(dc.id)){
+      chatStore.push({ id:dc.id, title:dc.title, pinned:!!dc.pinned, createdAt:dc.created_at, updatedAt:dc.updated_at, messages:[] });
+      added++;
+    }
+  });
+  if(added>0){
+    chatStore.sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||b.updatedAt-a.updatedAt);
+    safeStorage.set('mtstudio_chatstore_v2', JSON.stringify(chatStore));
+    renderHistory();
+  }
+}
+
+async function loadMessagesFromD1(chatId){
+  const chat = chatStore.find(c=>c.id===chatId);
+  if(!chat || !currentUser || chat.messages.length>0) return; // already loaded locally
+  const data = await d1Fetch('/chats/'+chatId+'/messages', { method:'GET' }).catch(()=>null);
+  if(!data || !data.messages || !data.messages.length) return;
+  chat.messages = data.messages.map(m=>({
+    role:m.role, content:m.content, pill:m.pill||'p-ar',
+    time:m.time_str, isHtml:!!m.is_html
+  }));
+  safeStorage.set('mtstudio_chatstore_v2', JSON.stringify(chatStore));
+}
+
+async function syncGemsToD1(){
+  if(!currentUser) return;
+  const data = await d1Fetch('/gems', { method:'GET' }).catch(()=>null);
+  if(!data || !data.gems) return;
+  const existingIds = new Set(gemStore.map(g=>g.id));
+  let added=0;
+  data.gems.forEach(dg=>{
+    if(!existingIds.has(dg.id)){
+      gemStore.push({ id:dg.id, name:dg.name, prompt:dg.prompt, createdAt:dg.created_at });
+      added++;
+    }
+  });
+  if(added>0){ saveGemStore(); rebuildGemMenu(); }
+}
+
+async function pushGemToD1(gem){
+  if(!currentUser || !gem) return;
+  await d1Fetch('/gems', { method:'POST', body: JSON.stringify({ id:gem.id, name:gem.name, prompt:gem.prompt })}).catch(()=>{});
+}
+
+async function deleteGemFromD1(gemId){
+  if(!currentUser) return;
+  await d1Fetch('/gems/'+gemId, { method:'DELETE' }).catch(()=>{});
+}
 function getActiveChat(){ return chatStore.find(c=>c.id===activeChatId) || null; }
 
 // ====== AUTH ======
@@ -709,6 +816,11 @@ function applyUser(u){
   document.getElementById('settingsName').textContent=name;
   document.getElementById('settingsEmail').textContent=u.email||'MtStudio AI';
   if(!activeChatId) renderWelcome(name);
+  // Background D1 sync on login
+  setTimeout(()=>{
+    loadChatsFromD1().catch(()=>{});
+    syncGemsToD1().catch(()=>{});
+  }, 1000);
 }
 function switchAccount(){ if(firebaseReady){ const p=new firebase.auth.GoogleAuthProvider(); p.setCustomParameters({prompt:'select_account'}); auth.signInWithPopup(p).catch(e=>{}); } }
 function signOutUser(){ if(firebaseReady&&auth){ auth.signOut(); } safeStorage.remove('mt_skipped_auth'); closeAccount(); showAuth(); }
@@ -860,13 +972,16 @@ function saveGem(){
   const name = document.getElementById('gemNameInput').value.trim();
   const prompt = document.getElementById('gemPromptInput').value.trim();
   if(!name || !prompt){ alert('নাম ও নির্দেশনা দুটোই দিন'); return; }
+  let savedGem;
   if(editingGemId){
     const g = gemStore.find(x=>x.id===editingGemId);
-    if(g){ g.name=name; g.prompt=prompt; }
+    if(g){ g.name=name; g.prompt=prompt; savedGem=g; }
   }else{
-    gemStore.push({ id:'gem_'+Date.now().toString(36), name, prompt, createdAt:Date.now() });
+    savedGem = { id:'gem_'+Date.now().toString(36), name, prompt, createdAt:Date.now() };
+    gemStore.push(savedGem);
   }
   saveGemStore();
+  if(savedGem) pushGemToD1(savedGem).catch(()=>{});
   closeGemEditor();
   renderGemList();
   rebuildGemMenu();
@@ -874,6 +989,7 @@ function saveGem(){
 function deleteGemFromEditor(){
   if(!editingGemId) return;
   if(confirm('এই আলিজা মুছে ফেলতে চান?')){
+    deleteGemFromD1(editingGemId).catch(()=>{});
     gemStore = gemStore.filter(x=>x.id!==editingGemId);
     saveGemStore();
     closeGemEditor();
@@ -1207,7 +1323,21 @@ function loadChat(chatId){
   if(!chat) return;
   activeChatId = chatId;
   chatEl.innerHTML='';
-  if(chat.messages.length===0){ renderWelcome(); return; }
+  if(chat.messages.length===0){
+    // D1 থেকে messages লোড করার চেষ্টা
+    loadMessagesFromD1(chatId).then(()=>{
+      const c = chatStore.find(c=>c.id===chatId);
+      if(c && c.messages.length>0){
+        chatEl.innerHTML='';
+        c.messages.forEach((m,idx)=>{
+          if(m.role==='user') renderUserMsgFromStore(m, idx);
+          else renderAiMsgFromStore(m, idx);
+        });
+        chatEl.scrollTop = chatEl.scrollHeight;
+      }else{ renderWelcome(); }
+    }).catch(()=>renderWelcome());
+    return;
+  }
   chat.messages.forEach((m,idx)=>{
     if(m.role==='user') renderUserMsgFromStore(m, idx);
     else renderAiMsgFromStore(m, idx);
@@ -1700,6 +1830,11 @@ function appendAiFinal(chat, replyText, pill, citations){
   persistAndMaybeTitle(chat);
   renderHistory();
   logAnalyticsEvent('response_received', {pill, length:(replyText||'').length, hasCitations:!!citations});
+  // D1 background sync
+  if(currentUser){
+    syncChatToD1(chat).catch(()=>{});
+    syncMessagesToD1(chat).catch(()=>{});
+  }
 }
 
 async function handleStreamingResponse(res, chat, pill){
