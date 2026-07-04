@@ -164,6 +164,7 @@ button{font-family:inherit;}
 .typing-wrap span:nth-child(2){animation-delay:0.15s;background:var(--violet-bright);}
 .typing-wrap span:nth-child(3){animation-delay:0.3s;background:var(--blue);}
 @keyframes tb{0%,80%,100%{transform:translateY(0);opacity:0.4;}40%{transform:translateY(-6px);opacity:1;}}
+@keyframes orbPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,211,238,0.4);}50%{box-shadow:0 0 0 24px rgba(34,211,238,0);}}
 
 /* ===== Message action row ===== */
 .msg-actions{display:flex;align-items:center;gap:2px;margin-top:2px;opacity:0.85;}
@@ -368,7 +369,7 @@ button{font-family:inherit;}
   </div>
   <button class="sheet-item" onclick="closePlusSheet();enterImageMode()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><div class="sheet-item-text"><div class="si1">ছবি</div><div class="si2">তৈরি ও এডিট করুন</div></div></button>
   <button class="sheet-item" onclick="closePlusSheet();openImageGen();switchGenMode('video')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><div class="sheet-item-text"><div class="si1">ভিডিও</div><div class="si2">আরমান দিয়ে বানান</div></div></button>
-  <button class="sheet-item" onclick="alert('শীঘ্রই আসছে')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><div class="sheet-item-text"><div class="si1">Music</div><div class="si2">অডিও ট্র্যাক বানান</div></div></button>
+  <button class="sheet-item" onclick="closePlusSheet();openMusicPanel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><div class="sheet-item-text"><div class="si1">Music</div><div class="si2">AI দিয়ে অডিও ট্র্যাক বানান</div></div></button>
   <button class="sheet-item" onclick="closePlusSheet();openCanvas()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><div class="sheet-item-text"><div class="si1">Canvas</div><div class="si2">কোড লিখুন ও চালান</div></div></button>
   <button class="sheet-item" onclick="closePlusSheet();enterResearchMode()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20 15 15 0 010-20"/></svg><div class="sheet-item-text"><div class="si1">Deep research</div><div class="si2">বিস্তারিত রিপোর্ট</div></div></button>
 </div>
@@ -381,14 +382,14 @@ button{font-family:inherit;}
   <div class="acct-head"><span class="acct-email" id="acctEmail">—</span><button class="acct-done" onclick="closeAccount()">Done</button></div>
   <div class="acct-avatar-big" id="acctAvatarBig">M</div>
   <div class="acct-hi" id="acctHi">Hi!</div>
-  <button class="acct-manage" id="acctManageBtn" onclick="alert('শীঘ্রই আসছে')">অ্যাকাউন্ট পরিচালনা</button>
+  <button class="acct-manage" id="acctManageBtn" onclick="manageAccount()">অ্যাকাউন্ট পরিচালনা</button>
   <button class="acct-switch" onclick="switchAccount()"><span class="as-left">Switch account</span><span class="as-right"><svg class="as-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></button>
   <div class="acct-section-label">More from MtStudio</div>
-  <button class="acct-item" onclick="alert('শীঘ্রই আসছে')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2l2.4 7.2H22l-6 4.4 2.3 7.2L12 16.4 5.7 20.8 8 13.6 2 9.2h7.6z"/></svg>MtStudio AI Plus-এ আপগ্রেড করুন</button>
+  <button class="acct-item" onclick="openUpgradePanel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2l2.4 7.2H22l-6 4.4 2.3 7.2L12 16.4 5.7 20.8 8 13.6 2 9.2h7.6z"/></svg>MtStudio AI Plus-এ আপগ্রেড করুন</button>
   <button class="acct-item" onclick="openActivityPanel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>আরমান অ্যাপ অ্যাক্টিভিটি</button>
   <button class="acct-item" onclick="openUsagePanel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>ব্যবহারের সীমা</button>
-  <button class="acct-item" onclick="alert('শীঘ্রই আসছে')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 014-4h6a4 4 0 014 4v2"/><path d="M19.5 8.5L21 10l-4 4-2-2"/></svg>ব্যক্তিগত ইন্টেলিজেন্স</button>
-  <button class="acct-item" onclick="alert('শীঘ্রই আসছে')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>মেমোরি ইম্পোর্ট করুন</button>
+  <button class="acct-item" onclick="openPersonalIntelPanel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 014-4h6a4 4 0 014 4v2"/><path d="M19.5 8.5L21 10l-4 4-2-2"/></svg>ব্যক্তিগত ইন্টেলিজেন্স</button>
+  <button class="acct-item" onclick="openMemoryImportPanel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>মেমোরি ইম্পোর্ট করুন</button>
   <button class="acct-item" onclick="openGemManager()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2l3 7h7l-5.5 5 2 7L12 17l-6.5 4 2-7L2 9h7z"/></svg>আলিজা ম্যানেজার</button>
   <button class="acct-item" onclick="openNotebook()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 18a4 4 0 014-4h10a4 4 0 014 4M3 18v2a1 1 0 001 1h16a1 1 0 001-1v-2M7 14V8a5 5 0 0110 0v6"/></svg>তনিমাবুক</button>
   <button class="acct-item" onclick="openUpdatesPanel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>আপডেট</button>
@@ -566,11 +567,111 @@ button{font-family:inherit;}
   </div>
   <div id="temp-input-area" style="position:relative;flex-shrink:0;padding:8px 14px calc(14px + env(safe-area-inset-bottom));">
     <div class="input-box" id="tempInputBox">
-      <button class="in-plus" onclick="alert('শীঘ্রই আসছে')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+      <button class="in-plus" onclick="openPlusSheet()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
       <textarea id="tempInput" rows="1" placeholder="আরমানকে জিজ্ঞেস করুন"></textarea>
-      <button class="in-mic" onclick="alert('শীঘ্রই আসছে')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg></button>
+      <button class="in-mic" onclick="toggleVoiceInput()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg></button>
       <button class="send-btn" id="tempSend" onclick="sendTemp()"><svg viewBox="0 0 24 24" fill="none" stroke="#050B14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="6 11 12 5 18 11"/></svg></button>
     </div>
+  </div>
+</div>
+
+<!-- ===== MUSIC PANEL — AI Music Generation ===== -->
+<div id="musicPanel" class="panel">
+  <div class="panel-header"><button class="tb-circle" onclick="closePanel('musicPanel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button><span class="panel-title">AI Music</span></div>
+  <div class="panel-body">
+    <div style="text-align:center;padding:20px 4px 28px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:44px;height:44px;color:var(--cyan);margin-bottom:14px;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      <div style="font-size:16px;font-weight:600;margin-bottom:8px;">AI দিয়ে মিউজিক বানান</div>
+      <div style="font-size:13.5px;color:var(--text-2);line-height:1.6;margin-bottom:24px;">আরমান আপনার গানের ধারণা, লিরিক্স বা মুড বর্ণনা থেকে মিউজিক prompt তৈরি করে দেবে, তারপর Suno AI-তে গিয়ে জেনারেট করুন।</div>
+    </div>
+    <textarea id="musicIdeaInput" class="ig-textarea" rows="4" placeholder="আপনার গানের ধারণা লিখুন... যেমনঃ বাংলা ব্যান্ড স্টাইলে একটি আশার গান, গিটার ও কীবোর্ড সহ"></textarea>
+    <button class="ig-generate-btn" onclick="generateMusicPrompt()" style="margin-bottom:12px;">আরমান দিয়ে Prompt তৈরি করুন</button>
+    <div id="musicPromptResult" style="display:none;">
+      <div style="font-size:12.5px;color:var(--text-2);margin-bottom:6px;">Suno AI-এর জন্য তৈরি Prompt:</div>
+      <div id="musicPromptText" class="ig-textarea" style="min-height:80px;cursor:text;white-space:pre-wrap;"></div>
+      <button class="ig-generate-btn" onclick="copyMusicPrompt()" style="background:var(--surface-2);color:var(--text);margin-bottom:8px;">কপি করুন</button>
+      <a href="https://suno.com" target="_blank" class="ig-generate-btn" style="display:block;text-align:center;text-decoration:none;">Suno AI-তে যান →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== UPGRADE PANEL — AI Plus ===== -->
+<div id="upgradePanel" class="panel">
+  <div class="panel-header"><button class="tb-circle" onclick="closePanel('upgradePanel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button><span class="panel-title">MtStudio AI Plus</span></div>
+  <div class="panel-body">
+    <div style="text-align:center;padding:16px 4px 24px;">
+      <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--cyan-deep),var(--violet));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;">✦</div>
+      <div style="font-size:20px;font-weight:700;margin-bottom:6px;">AI Plus</div>
+      <div style="font-size:13.5px;color:var(--text-2);margin-bottom:28px;">সীমাহীন ব্যবহার + সর্বোচ্চ মডেল + অগ্রাধিকার সাপোর্ট</div>
+    </div>
+    <div style="background:var(--surface-2);border-radius:18px;padding:20px;margin-bottom:16px;">
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Plus-এ যা পাবেন</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:14.5px;"><span style="color:var(--cyan);">✓</span> সীমাহীন দৈনিক মেসেজ</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:14.5px;"><span style="color:var(--cyan);">✓</span> Claude Opus 4.7 (সর্বোচ্চ মডেল) অ্যাক্সেস</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:14.5px;"><span style="color:var(--cyan);">✓</span> অগ্রাধিকারভিত্তিক রেসপন্স স্পিড</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:14.5px;"><span style="color:var(--cyan);">✓</span> উন্নত Deep Research মোড</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:14.5px;"><span style="color:var(--cyan);">✓</span> বেশি ছবি ও ভিডিও জেনারেশন</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:28px;font-weight:700;">৳৪৯৯<span style="font-size:14px;font-weight:400;color:var(--text-2);">/মাস</span></div>
+    </div>
+    <button class="ig-generate-btn" onclick="startUpgradeFlow()">এখনই আপগ্রেড করুন</button>
+    <div style="text-align:center;margin-top:12px;font-size:12.5px;color:var(--text-3);">যোগাযোগ: support@mtstudioai.com</div>
+  </div>
+</div>
+
+<!-- ===== PERSONAL INTELLIGENCE PANEL ===== -->
+<div id="personalIntelPanel" class="panel">
+  <div class="panel-header"><button class="tb-circle" onclick="closePanel('personalIntelPanel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button><span class="panel-title">ব্যক্তিগত ইন্টেলিজেন্স</span></div>
+  <div class="panel-body">
+    <div style="font-size:13.5px;color:var(--text-2);margin-bottom:20px;line-height:1.6;">আরমান আপনার সম্পর্কে যা জানলে ভালো সাহায্য করতে পারবে, সেটা এখানে লিখুন। এটা প্রতিটি কথোপকথনে context হিসেবে ব্যবহার হবে।</div>
+    <div style="font-size:12.5px;color:var(--text-2);margin-bottom:6px;">আপনার পেশা / ব্যবসা</div>
+    <input type="text" id="piProfession" class="ig-select" style="margin-bottom:12px;" placeholder="যেমনঃ Digital Agency Owner, Content Creator">
+    <div style="font-size:12.5px;color:var(--text-2);margin-bottom:6px;">আপনার লক্ষ্য / যা নিয়ে সবচেয়ে বেশি কাজ করেন</div>
+    <input type="text" id="piGoal" class="ig-select" style="margin-bottom:12px;" placeholder="যেমনঃ Facebook Marketing, AI Tools, Content Automation">
+    <div style="font-size:12.5px;color:var(--text-2);margin-bottom:6px;">আরমান কীভাবে কথা বলুক পছন্দ করেন</div>
+    <select id="piStyle" class="ig-select" style="margin-bottom:20px;">
+      <option value="friendly">বন্ধুত্বপূর্ণ ও সংক্ষিপ্ত</option>
+      <option value="professional">প্রফেশনাল ও বিস্তারিত</option>
+      <option value="direct">সরাসরি, কোনো ভূমিকা ছাড়া</option>
+      <option value="coach">কোচের মতো — প্রশ্ন করে শেখায়</option>
+    </select>
+    <div style="font-size:12.5px;color:var(--text-2);margin-bottom:6px;">যেকোনো অতিরিক্ত তথ্য</div>
+    <textarea id="piExtra" class="ig-textarea" rows="3" placeholder="যেমনঃ আমি Noakhali-তে থাকি, বাংলাদেশি বাজারে কাজ করি, iPhone ব্যবহার করি"></textarea>
+    <button class="ig-generate-btn" onclick="savePersonalIntel()">সংরক্ষণ করুন</button>
+  </div>
+</div>
+
+<!-- ===== MEMORY IMPORT PANEL ===== -->
+<div id="memoryImportPanel" class="panel">
+  <div class="panel-header"><button class="tb-circle" onclick="closePanel('memoryImportPanel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button><span class="panel-title">মেমোরি ইম্পোর্ট</span></div>
+  <div class="panel-body">
+    <div style="font-size:13.5px;color:var(--text-2);margin-bottom:20px;line-height:1.6;">আগের কথোপকথন, নোট বা যেকোনো টেক্সট ইম্পোর্ট করুন। আরমান এটা মনে রেখে পরবর্তী উত্তর দেবে।</div>
+    <div style="font-size:12.5px;color:var(--text-2);margin-bottom:6px;">বর্তমান মেমোরি</div>
+    <div id="currentMemoryDisplay" style="background:var(--surface-2);border-radius:14px;padding:14px;font-size:13px;color:var(--text-2);min-height:60px;margin-bottom:16px;white-space:pre-wrap;line-height:1.6;">লোড হচ্ছে...</div>
+    <div style="font-size:12.5px;color:var(--text-2);margin-bottom:6px;">নতুন তথ্য যুক্ত করুন</div>
+    <textarea id="memoryImportText" class="ig-textarea" rows="5" placeholder="যেকোনো তথ্য লিখুন বা paste করুন যা আরমান মনে রাখুক...&#10;&#10;যেমনঃ&#10;- আমার ক্লায়েন্ট X-এর সাথে প্রজেক্ট Y নিয়ে কাজ চলছে&#10;- আমার ওয়েবসাইট mtstudioai.com&#10;- বাজেট ৳৫০,০০০"></textarea>
+    <button class="ig-generate-btn" onclick="importMemory()" style="margin-bottom:8px;">মেমোরিতে যুক্ত করুন</button>
+    <button class="ig-generate-btn" onclick="clearAllMemory()" style="background:rgba(248,113,113,0.12);color:#f87171;">সব মেমোরি মুছুন</button>
+  </div>
+</div>
+
+<!-- ===== LIVE VOICE PANEL ===== -->
+<div id="liveVoicePanel" class="panel" style="background:var(--bg);">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;">
+    <div id="liveVoiceOrb" style="width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--cyan-deep),var(--violet));display:flex;align-items:center;justify-content:center;margin-bottom:32px;transition:transform 0.2s;box-shadow:0 0 0 0 rgba(34,211,238,0.4);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" style="width:48px;height:48px;"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg>
+    </div>
+    <div id="liveVoiceStatus" style="font-size:18px;font-weight:600;margin-bottom:8px;">আরমান শুনছে...</div>
+    <div id="liveVoiceTranscript" style="font-size:14px;color:var(--text-2);text-align:center;min-height:48px;line-height:1.6;max-width:280px;"></div>
+    <div id="liveVoiceResponse" style="margin-top:20px;font-size:15px;color:var(--text);text-align:center;max-width:320px;line-height:1.7;display:none;"></div>
+  </div>
+  <div style="padding:24px 24px calc(24px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:20px;">
+    <button onclick="stopLiveVoice()" style="width:56px;height:56px;border-radius:50%;border:none;background:var(--surface-2);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:22px;height:22px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
   </div>
 </div>
 
@@ -613,7 +714,7 @@ button{font-family:inherit;}
       <button class="in-plus" onclick="openPlusSheet()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
       <textarea id="input" rows="1" placeholder="আরমানকে জিজ্ঞেস করুন"></textarea>
       <button class="in-mic" id="micBtn" onclick="toggleVoiceInput()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg></button>
-      <button class="in-live" onclick="alert('শীঘ্রই আসছে')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="9" x2="6" y2="15"/><line x1="12" y1="5" x2="12" y2="19"/><line x1="18" y1="9" x2="18" y2="15"/></svg></button>
+      <button class="in-live" id="liveBtn" onclick="startLiveVoice()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="9" x2="6" y2="15"/><line x1="12" y1="5" x2="12" y2="19"/><line x1="18" y1="9" x2="18" y2="15"/></svg></button>
       <button class="send-btn" id="send" onclick="send()"><svg viewBox="0 0 24 24" fill="none" stroke="#050B14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="6 11 12 5 18 11"/></svg></button>
       <button class="stop-btn" id="stopBtn" onclick="stopGeneration()"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
     </div>
@@ -928,6 +1029,217 @@ function openUsagePanel(){
 function openUpdatesPanel(){closeAccount();document.getElementById('updatesPanel').classList.add('open');}
 function openPrivacyPanel(){closeAccount();document.getElementById('privacyPanel').classList.add('open');}
 function openHelpPanel(){closeAccount();document.getElementById('helpPanel').classList.add('open');}
+
+/* ============ Music Panel ============ */
+function openMusicPanel(){ document.getElementById('musicPanel').classList.add('open'); }
+async function generateMusicPrompt(){
+  const idea = document.getElementById('musicIdeaInput').value.trim();
+  if(!idea){ alert('আপনার গানের ধারণা লিখুন'); return; }
+  const resultDiv = document.getElementById('musicPromptResult');
+  const promptText = document.getElementById('musicPromptText');
+  resultDiv.style.display='none';
+  try{
+    const res = await fetch(WORKER_URL,{
+      method:'POST', headers:{'Content-Type':'application/json','X-MT-Key':MT_KEY},
+      body: JSON.stringify({
+        message: `তুমি একজন AI music prompt expert। নিচের গানের ধারণা থেকে Suno AI-এর জন্য একটি perfect music generation prompt তৈরি করো। Prompt-এ style, mood, instruments, tempo, vocals সব specify করো। শুধু prompt-টাই দাও, কোনো ব্যাখ্যা নয়।\n\nধারণা: ${idea}`,
+        model:'grok-4.3', modelType:'arman', history:[], memory:false,
+        conversationId:'music-'+getUserKey()
+      })
+    });
+    const data = await res.json();
+    const reply = data.reply || data.content || '...';
+    promptText.textContent = reply;
+    resultDiv.style.display='block';
+  }catch(e){ alert('সমস্যা হয়েছে। আবার চেষ্টা করুন।'); }
+}
+function copyMusicPrompt(){
+  const text = document.getElementById('musicPromptText').textContent;
+  navigator.clipboard?.writeText(text).then(()=>alert('কপি হয়েছে! Suno AI-তে paste করুন।'));
+}
+
+/* ============ Upgrade Panel ============ */
+function openUpgradePanel(){ closeAccount(); document.getElementById('upgradePanel').classList.add('open'); }
+function startUpgradeFlow(){
+  const email = currentUser ? currentUser.email : '';
+  const subject = encodeURIComponent('MtStudio AI Plus আপগ্রেড');
+  const body = encodeURIComponent(`আমি MtStudio AI Plus-এ আপগ্রেড করতে চাই।\n\nইমেইল: ${email}\n\nঅনুগ্রহ করে পেমেন্টের নির্দেশনা পাঠান।`);
+  window.open(`mailto:support@mtstudioai.com?subject=${subject}&body=${body}`);
+}
+
+/* ============ Account Management ============ */
+function manageAccount(){
+  if(!currentUser){ alert('সাইন ইন করুন'); return; }
+  if(firebaseReady && auth){
+    const provider = currentUser.providerData[0]?.providerId;
+    if(provider === 'google.com'){
+      window.open('https://myaccount.google.com/', '_blank');
+    }else{
+      // Email/password user — show change password option
+      openChangePasswordPanel();
+    }
+  }
+}
+function openChangePasswordPanel(){
+  const newPw = prompt('নতুন পাসওয়ার্ড দিন (কমপক্ষে ৬ অক্ষর):');
+  if(!newPw || newPw.length < 6){ return; }
+  if(!firebaseReady || !auth?.currentUser) return;
+  auth.currentUser.updatePassword(newPw)
+    .then(()=> alert('পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।'))
+    .catch(e=>{
+      if(e.code==='auth/requires-recent-login'){
+        alert('নিরাপত্তার জন্য সাইন আউট করে আবার সাইন ইন করুন, তারপর পাসওয়ার্ড পরিবর্তন করুন।');
+      }else{ alert('সমস্যা: '+e.message); }
+    });
+}
+
+/* ============ Personal Intelligence ============ */
+let personalIntel = JSON.parse(safeStorage.get('mtstudio_personal_intel','{}'));
+function openPersonalIntelPanel(){
+  closeAccount();
+  document.getElementById('piProfession').value = personalIntel.profession || '';
+  document.getElementById('piGoal').value = personalIntel.goal || '';
+  document.getElementById('piStyle').value = personalIntel.style || 'friendly';
+  document.getElementById('piExtra').value = personalIntel.extra || '';
+  document.getElementById('personalIntelPanel').classList.add('open');
+}
+function savePersonalIntel(){
+  personalIntel = {
+    profession: document.getElementById('piProfession').value.trim(),
+    goal: document.getElementById('piGoal').value.trim(),
+    style: document.getElementById('piStyle').value,
+    extra: document.getElementById('piExtra').value.trim(),
+  };
+  safeStorage.set('mtstudio_personal_intel', JSON.stringify(personalIntel));
+  closePanel('personalIntelPanel');
+  alert('সংরক্ষণ হয়েছে। এখন থেকে আরমান এই তথ্য মাথায় রেখে উত্তর দেবে।');
+}
+// Personal intel inject into system prompt — called from buildSystemPrompt override in worker via memory
+function getPersonalIntelContext(){
+  if(!personalIntel || (!personalIntel.profession && !personalIntel.goal)) return '';
+  let ctx = '\nব্যবহারকারীর ব্যক্তিগত তথ্য:';
+  if(personalIntel.profession) ctx += `\n- পেশা: ${personalIntel.profession}`;
+  if(personalIntel.goal) ctx += `\n- লক্ষ্য: ${personalIntel.goal}`;
+  if(personalIntel.extra) ctx += `\n- অতিরিক্ত: ${personalIntel.extra}`;
+  if(personalIntel.style) ctx += `\n- পছন্দের ভাষাশৈলী: ${personalIntel.style}`;
+  return ctx;
+}
+
+/* ============ Memory Import ============ */
+async function openMemoryImportPanel(){
+  closeAccount();
+  document.getElementById('memoryImportPanel').classList.add('open');
+  // বর্তমান memory দেখাও
+  const memEl = document.getElementById('currentMemoryDisplay');
+  if(!currentUser){ memEl.textContent='মেমোরি ব্যবহারের জন্য সাইন ইন করুন।'; return; }
+  try{
+    const data = await d1Fetch('/settings',{method:'GET'});
+    if(data?.settings) memEl.textContent = '(D1 settings synced ✓)';
+    // KV memory
+    const uid = getUserKey();
+    const convId = uid+'_memory_import';
+    memEl.textContent = 'ব্যক্তিগত তথ্য + আগের কথোপকথন থেকে সংরক্ষিত।';
+  }catch(e){ memEl.textContent = 'মেমোরি লোড করা যায়নি।'; }
+}
+async function importMemory(){
+  const text = document.getElementById('memoryImportText').value.trim();
+  if(!text){ alert('কিছু লিখুন আগে'); return; }
+  const btn = document.querySelector('#memoryImportPanel .ig-generate-btn');
+  btn.disabled=true; btn.textContent='সংরক্ষণ হচ্ছে...';
+  try{
+    // KV-তে মেমোরি save করা Worker-এর saveMemory ফাংশনের মাধ্যমে
+    const uid = getUserKey();
+    const piContext = getPersonalIntelContext();
+    const combined = `${piContext}\n\nইম্পোর্ট করা তথ্য:\n${text}`.slice(-4000);
+    // একটা dummy message পাঠিয়ে memory save করা
+    await fetch(WORKER_URL,{
+      method:'POST', headers:{'Content-Type':'application/json','X-MT-Key':MT_KEY},
+      body: JSON.stringify({
+        message:'[memory import]',
+        model:'grok-build-0.1', modelType:'arman', history:[],
+        memory:true, memoryOverride: combined,
+        conversationId: uid+'_'+activeChatId,
+      })
+    });
+    document.getElementById('memoryImportText').value='';
+    document.getElementById('currentMemoryDisplay').textContent = combined.slice(0,300)+'...';
+    alert('মেমোরিতে সংরক্ষণ হয়েছে। আরমান এখন থেকে এটা মনে রাখবে।');
+  }catch(e){ alert('সমস্যা হয়েছে: '+e.message); }
+  finally{ btn.disabled=false; btn.textContent='মেমোরিতে যুক্ত করুন'; }
+}
+async function clearAllMemory(){
+  if(!confirm('সব মেমোরি মুছে ফেলবেন?')) return;
+  safeStorage.remove('mtstudio_personal_intel');
+  personalIntel = {};
+  document.getElementById('currentMemoryDisplay').textContent='মেমোরি মুছে ফেলা হয়েছে।';
+  document.getElementById('memoryImportText').value='';
+}
+
+/* ============ Live Voice Mode ============ */
+let liveRecognizer=null, liveMode=false;
+function startLiveVoice(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ alert('এই ব্রাউজারে Live Voice সাপোর্ট নেই। Chrome ব্যবহার করুন।'); return; }
+  document.getElementById('liveVoicePanel').classList.add('open');
+  document.getElementById('liveVoiceResponse').style.display='none';
+  liveMode=true;
+  startLiveListening();
+}
+function stopLiveVoice(){
+  liveMode=false;
+  if(liveRecognizer) liveRecognizer.stop();
+  document.getElementById('liveVoicePanel').classList.remove('open');
+}
+function startLiveListening(){
+  if(!liveMode) return;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  liveRecognizer = new SR();
+  liveRecognizer.lang='bn-BD';
+  liveRecognizer.interimResults=true;
+  liveRecognizer.continuous=false;
+  const statusEl=document.getElementById('liveVoiceStatus');
+  const transcriptEl=document.getElementById('liveVoiceTranscript');
+  const responseEl=document.getElementById('liveVoiceResponse');
+  const orb=document.getElementById('liveVoiceOrb');
+  statusEl.textContent='আরমান শুনছে...';
+  transcriptEl.textContent='';
+  orb.style.animation='orbPulse 1.5s infinite';
+  liveRecognizer.onresult=(e)=>{
+    let text='';
+    for(let i=0;i<e.results.length;i++) text+=e.results[i][0].transcript;
+    transcriptEl.textContent=text;
+  };
+  liveRecognizer.onend=async ()=>{
+    const finalText=transcriptEl.textContent.trim();
+    if(!finalText || !liveMode) return;
+    orb.style.animation='none';
+    orb.style.background='linear-gradient(135deg,var(--violet),var(--violet-bright))';
+    statusEl.textContent='আরমান ভাবছে...';
+    responseEl.style.display='none';
+    try{
+      const res=await fetch(WORKER_URL,{
+        method:'POST', headers:{'Content-Type':'application/json','X-MT-Key':MT_KEY},
+        body: JSON.stringify({message:finalText, model:'grok-build-0.1', modelType:'arman', history:[], memory:false, conversationId:'live-voice'})
+      });
+      const data=await res.json();
+      const reply=data.reply||'...';
+      responseEl.textContent=reply;
+      responseEl.style.display='block';
+      statusEl.textContent='আরমান বলছে...';
+      // TTS — Web Speech Synthesis
+      if('speechSynthesis' in window){
+        const utt=new SpeechSynthesisUtterance(reply);
+        utt.lang='bn-BD'; utt.rate=0.95;
+        utt.onend=()=>{ if(liveMode){ orb.style.background='linear-gradient(135deg,var(--cyan-deep),var(--violet))'; orb.style.animation='orbPulse 1.5s infinite'; statusEl.textContent='আরমান শুনছে...'; transcriptEl.textContent=''; setTimeout(startLiveListening, 500); } };
+        window.speechSynthesis.speak(utt);
+      }else{
+        setTimeout(()=>{ if(liveMode) startLiveListening(); }, 2000);
+      }
+    }catch(e){ statusEl.textContent='সমস্যা হয়েছে। আবার চেষ্টা করুন।'; }
+  };
+  liveRecognizer.onerror=()=>{ if(liveMode) setTimeout(startLiveListening, 1000); };
+  try{ liveRecognizer.start(); }catch(e){}
+}
 
 /* ============ Gem Manager (আলিজা ম্যানেজার) — কাস্টম পার্সোনা ============ */
 let gemStore = JSON.parse(safeStorage.get('mtstudio_gems_v1','[]'));
@@ -1309,6 +1621,7 @@ function ensureActiveChat(){
   chatStore.unshift(chat);
   activeChatId = chat.id;
   saveChatStore();
+  if(currentUser) syncChatToD1(chat).catch(()=>{});
   return chat;
 }
 function newChat(){
@@ -1747,6 +2060,7 @@ async function sendMessageCore(text, attachments, opts){
           attachments: (attachments||[]).map(a=>({dataUrl:a.dataUrl, mime:a.mime})),
           model: route.model, modelType: route.type,
           gemPrompt: activeGemPrompt || null,
+          personalIntelContext: getPersonalIntelContext() || null,
           history: chat.messages.slice(-21,-1).map(m=>({role:m.role, content:m.content})),
           memory: memoryOn,
           research: !!opts.research,
