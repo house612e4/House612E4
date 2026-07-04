@@ -1,0 +1,14 @@
+{
+  "name": "MtStudio AI",
+  "short_name": "MtStudio",
+  "description": "আরমান — MtStudio AI-এর নিজস্ব AI অ্যাসিস্ট্যান্ট",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050B14",
+  "theme_color": "#050B14",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "public/mt_logo.jpeg", "sizes": "192x192", "type": "image/jpeg", "purpose": "any maskable" },
+    { "src": "public/mt_logo.jpeg", "sizes": "512x512", "type": "image/jpeg", "purpose": "any maskable" }
+  ]
+}
